@@ -13,7 +13,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "setup": "chmod +x set_envs.sh && ./set_envs.sh"
+    "setup": "chmod +x set_envs.sh && . set_envs.sh"
   },
   "keywords": [],
   "author": "",

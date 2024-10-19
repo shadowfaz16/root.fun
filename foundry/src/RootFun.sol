@@ -6,9 +6,7 @@ import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol";
 import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router01.sol";
 
-contract TokenFactory {
-
-
+contract RootFun {
     struct memeToken {
         string name;
         string symbol;
@@ -23,9 +21,9 @@ contract TokenFactory {
 
     mapping(address => memeToken) public addressToMemeTokenMapping;
 
-    uint constant MEMETOKEN_CREATION_PLATFORM_FEE = 0.0001 ether;
+    uint constant MEMETOKEN_CREATION_PLATFORM_FEE = 0 ether;
     uint constant MEMECOIN_FUNDING_DEADLINE_DURATION = 10 days;
-    uint constant MEMECOIN_FUNDING_GOAL = 24 ether;
+    uint constant MEMECOIN_FUNDING_GOAL = .1 ether;
 
     address constant UNISWAP_V2_FACTORY_ADDRESS = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
     address constant UNISWAP_V2_ROUTER_ADDRESS = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
@@ -108,10 +106,9 @@ contract TokenFactory {
 
         // check to ensure there is enough supply to facilitate the purchase
         uint currentSupply = memeTokenCt.totalSupply();
-        console.log("Current supply of token is ", currentSupply);
-        console.log("Max supply of token is ", MAX_SUPPLY);
+
         uint available_qty = MAX_SUPPLY - currentSupply;
-        console.log("Qty available for purchase ",available_qty);
+
 
 
         uint scaled_available_qty = available_qty / DECIMALS;
@@ -123,7 +120,6 @@ contract TokenFactory {
         uint currentSupplyScaled = (currentSupply - INIT_SUPPLY) / DECIMALS;
         uint requiredEth = calculateCost(currentSupplyScaled, tokenQty);
 
-        console.log("ETH required for purchasing meme tokens is ",requiredEth);
 
         // check if user has sent correct value of eth to facilitate this purchase
         require(msg.value >= requiredEth, "Incorrect value of ETH sent");
@@ -134,13 +130,13 @@ contract TokenFactory {
         if(listedToken.fundingRaised >= MEMECOIN_FUNDING_GOAL){
             // create liquidity pool
             address pool = _createLiquidityPool(memeTokenAddress);
-            console.log("Pool address ", pool);
+       
 
             // provide liquidity
             uint tokenAmount = INIT_SUPPLY;
             uint ethAmount = listedToken.fundingRaised;
             uint liquidity = _provideLiquidity(memeTokenAddress, tokenAmount, ethAmount);
-            console.log("UNiswap provided liquidty ", liquidity);
+
 
             // burn lp token
             _burnLpTokens(pool, liquidity);
@@ -150,9 +146,7 @@ contract TokenFactory {
         // mint the tokens
         memeTokenCt.mint(tokenQty_scaled, msg.sender);
 
-        console.log("User balance of the tokens is ", memeTokenCt.balanceOf(msg.sender));
 
-        console.log("New available qty ", MAX_SUPPLY - memeTokenCt.totalSupply());
 
         return 1;
     }
@@ -168,7 +162,7 @@ contract TokenFactory {
         Token memeTokenCt = Token(memeTokenAddress);
         memeTokenCt.approve(UNISWAP_V2_ROUTER_ADDRESS, tokenAmount);
         IUniswapV2Router01 router = IUniswapV2Router01(UNISWAP_V2_ROUTER_ADDRESS);
-        (uint amountToken, uint amountETH, uint liquidity) = router.addLiquidityETH{
+        (, , uint liquidity) = router.addLiquidityETH{
             value: ethAmount
         }(memeTokenAddress, tokenAmount, tokenAmount, ethAmount, address(this), block.timestamp);
         return liquidity;
@@ -177,10 +171,7 @@ contract TokenFactory {
     function _burnLpTokens(address pool, uint liquidity) internal returns(uint){
         IUniswapV2Pair uniswapv2pairct = IUniswapV2Pair(pool);
         uniswapv2pairct.transfer(address(0), liquidity);
-        console.log("Uni v2 tokens burnt");
+   
         return 1;
     }
-
-
-
 }

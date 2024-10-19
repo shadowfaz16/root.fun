@@ -73,27 +73,27 @@ export default function Index() {
         <header className="flex justify-between items-center p-6 bg-[#121212]">
           <div className="flex gap-6">
             <button
-              className={`text-lg font-semibold ${
-                activeTab === "recent" ? "text-yellow-500" : "text-gray-400"
-              } hover:text-yellow-400`}
+              className={`text-lg  ${
+                activeTab === "recent" ? "text-orange-500" : "text-gray-400"
+              } hover:text-orange-400`}
               onClick={() => setActiveTab("recent")}
             >
               Recent Buys
             </button>
             <button
-              className={`text-lg font-semibold ${
-                activeTab === "hot" ? "text-yellow-500" : "text-gray-400"
-              } hover:text-yellow-400`}
+              className={`text-lg  ${
+                activeTab === "hot" ? "text-orange-500" : "text-gray-400"
+              } hover:text-orange-400`}
               onClick={() => setActiveTab("hot")}
             >
               Hot Tokens
             </button>
             <button
-              className={`text-lg font-semibold ${
+              className={`text-lg  ${
                 activeTab === "how-it-works"
-                  ? "text-yellow-500"
+                  ? "text-orange-500"
                   : "text-gray-400"
-              } hover:text-yellow-400`}
+              } hover:text-orange-400`}
               onClick={() => setActiveTab("how-it-works")}
             >
               How it works
@@ -101,24 +101,24 @@ export default function Index() {
             <Link
               to="https://twitter.com/rootfun_io"
               target="_blank"
-              className={`text-lg font-semibold ${
-                activeTab === "twitter" ? "text-yellow-500" : "text-gray-400"
-              } hover:text-yellow-400`}
+              className={`text-lg  ${
+                activeTab === "twitter" ? "text-orange-500" : "text-gray-400"
+              } hover:text-orange-400`}
             >
               Twitter
             </Link>
             <Link
               to="https://t.me/rootfun_io"
               target="_blank"
-              className={`text-lg font-semibold ${
-                activeTab === "telegram" ? "text-yellow-500" : "text-gray-400"
-              } hover:text-yellow-400`}
+              className={`text-lg  ${
+                activeTab === "telegram" ? "text-orange-500" : "text-gray-400"
+              } hover:text-orange-400`}
             >
               Telegram
             </Link>
           </div>
 
-          <button className="bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-2 rounded-full font-bold transition duration-300">
+          <button className="bg-orange-400 hover:bg-orange-500 text-black px-6 py-2 rounded-full font-bold transition duration-300">
             Connect Wallet
           </button>
         </header>
@@ -134,7 +134,7 @@ export default function Index() {
                   >
                     <div className="text-4xl mb-4">{buy.icon}</div>
                     <div className="text-xl font-semibold mb-2">{buy.name}</div>
-                    <div className="text-yellow-500 font-bold mb-2">
+                    <div className="text-orange-500 font-bold mb-2">
                       {buy.price}
                     </div>
                     <div className="text-gray-400 text-sm">{buy.timestamp}</div>
@@ -168,7 +168,7 @@ export default function Index() {
                     </div>
                     <div className="w-full bg-gray-700 rounded-full h-2.5">
                       <div
-                        className="bg-yellow-500 h-2.5 rounded-full"
+                        className="bg-orange-500 h-2.5 rounded-full"
                         style={{ width: `${token.progress}%` }}
                       ></div>
                     </div>

@@ -145,7 +145,7 @@ export default function Homepage() {
                         key={index}
                         className="bg-[#252525] rounded-xl shadow-lg hover:shadow-2xl transition duration-300 p-3 md:p-4 relative"
                       >
-                        <div className="flex gap-4 items-center pb-4 border-b border-gray-700 mb-2 md:mb-4">
+                        <div className="flex gap-4 items-center pb-4 border-b border-gray-700 mb-2 md:mb-3">
                           {token.tokenImageUrl &&
                           token.tokenImageUrl !== "" &&
                           !token.tokenImageUrl.includes("ipfs://") &&

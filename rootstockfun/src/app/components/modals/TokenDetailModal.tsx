@@ -68,52 +68,21 @@ const TokenDetail = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!tokenAddress) return;
       try {
-        setLoading(true);
-        const tokenHoldersData = await getTokenHolders();
-        console.log("tokenHoldersData", tokenHoldersData);
-
-        if (
-          tokenHoldersData &&
-          tokenHoldersData.data &&
-          tokenHoldersData.data.items
-        ) {
-          setTokenHolders(tokenHoldersData.data.items);
+        const result = await getTokenHolders(tokenAddress as string);
+        if (result.success) {
+          setTokenHolders(result.holders);
         } else {
-          console.error(
-            "Unexpected tokenHoldersData structure:",
-            tokenHoldersData
-          );
-          setTokenHolders([]);
+          console.error("Failed to fetch token holders:", result.error);
         }
-
-        await fetchTotalSupply();
       } catch (error) {
-        console.error("Error fetching data:", error);
-        setTokenHolders([]);
-      } finally {
-        setLoading(false);
+        console.error("Error in fetchData:", error);
       }
     };
-
     fetchData();
   }, [tokenAddress]);
 
   console.log("tokenHolders", tokenHolders);
-
-  const fetchOwners = async () => {
-    const response = await fetch(
-      `https://deep-index.moralis.io/api/v2.2/erc20/${tokenAddress}/owners?chain=sepolia&order=DESC`,
-      {
-        headers: {
-          accept: "application/json",
-          "X-API-Key": process.env.NEXT_PUBLIC_X_API_KEY || "",
-        },
-      }
-    );
-    return response.json();
-  };
 
   //   const fetchTransfers = async () => {
   //     const response = await fetch(
@@ -382,36 +351,42 @@ const TokenDetail = () => {
 
       <div className="mt-12 space-y-8">
         <section>
-          <h3 className="text-2xl font-bold mb-4">Owners</h3>
-          {loading ? (
-            <p>Loading owners...</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full table-auto">
-                <thead className="bg-[#252525]">
-                  <tr>
-                    <th className="px-4 py-2 text-left">Owner Address</th>
-                    <th className="px-4 py-2 text-left">
-                      Percentage of Total Supply
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {owners.map((owner: any, index: number) => (
+          <h3 className="text-2xl font-bold mb-4">Token Holders</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full table-auto">
+              <thead className="bg-[#252525]">
+                <tr>
+                  <th className="px-4 py-2 text-left">Address</th>
+                  <th className="px-4 py-2 text-left">Balance</th>
+                  <th className="px-4 py-2 text-left">% Distribution</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tokenHolders.map((holder: { address: string, balance: string }, index) => {
+                  const totalSupply = tokenHolders.reduce(
+                    (sum, h: { balance: string }) => sum + Number(h.balance),
+                    0
+                  );
+                  const percentage = (
+                    (Number(holder.balance) / totalSupply) *
+                    100
+                  ).toFixed(2);
+                  return (
                     <tr
                       key={index}
                       className={index % 2 === 0 ? "bg-transparent" : ""}
                     >
-                      <td className="px-4 py-2">{owner.owner_address}</td>
+                      <td className="px-4 py-2">{holder.address}</td>
                       <td className="px-4 py-2">
-                        {owner.percentage_relative_to_total_supply}%
+                        {parseFloat(holder.balance).toFixed()} Tokens
                       </td>
+                      <td className="px-4 py-2">{percentage}%</td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <section>

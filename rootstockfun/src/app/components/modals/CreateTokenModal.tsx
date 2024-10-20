@@ -39,10 +39,10 @@ export default function CreateTokenModal({
     imageUrl: "",
   });
   const [step, setStep] = useState(1);
-  const { writeContract, data, isError, error, isPending } = useWriteContract();
+  const { writeContract, data, isError, error, isPending  } = useWriteContract();
 
   const createToken = async () => {
-    const tx = await writeContract(
+    const tx = writeContract(
       {
         abi,
         address: "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06",
@@ -57,15 +57,25 @@ export default function CreateTokenModal({
         value: BigInt(100000000000000),
       },
       {
-        onSuccess: () => {
-          toast.success("Token created successfully!");
-        },
+        // onSuccess: () => {
+        //   toast.success("Token created successfully!");
+        // },
         onError: (error) => {
           toast.error(`Error creating token: ${error.message}`);
         },
+        onSuccess(data, variables, context) {
+          console.log("data: ", data);
+          console.log("variables: ", variables);
+          console.log("context: ", context);
+          toast.success("Data created successfully!!!!!");
+        },
       }
     );
-    console.log("tx: ", tx);
+    if (data) {
+      console.log("tx: ", tx);
+      console.log("data: ", data);
+      toast.success("Data created successfully!!!!!");
+    }
   };
 
   const handleGenerateLink = async () => {
@@ -112,9 +122,8 @@ export default function CreateTokenModal({
         className="bg-[#252525] rounded-lg p-4 md:p-8 w-full max-w-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <button onClick={getFillerItemsCall}>Get Filler Items</button>
         <h3 className="text-2xl font-bold text-white mb-6">
-          Create Your Meme Token
+          Launch Your Meme Token
         </h3>
         <form onSubmit={handleSubmit} className="space-y-6">
           {step === 1 && (

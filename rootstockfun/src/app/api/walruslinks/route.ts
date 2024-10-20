@@ -70,43 +70,47 @@ export async function getHoldersByAddress(tokenAddress: string) {
   }
 }
 
-export async function getTokenHolders() {
+export async function getTokenHolders(contractAddress: string, page: number = 1, offset: number = 100) {
   try {
-    const tokenAddress = "0x2E1474D466CA2827313e12b46E09520Cf72F8a14";
-    console.log("tokenAddress", tokenAddress);
-    const chainName = "rsk-testnet";
-    const baseUrl = 'https://api.covalenthq.com/v1';
-    const endpoint = `${baseUrl}/${chainName}/tokens/${tokenAddress}/token_holders_v2/`;
-    
-    const options = {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Bearer cqt_rQB7YDDmdxVkwcB7HB3vhF78qYdc'
-      }
-    };
-
-    const response = await fetch(endpoint, options);
-    console.log("response", {
-      body: response.body,
-      bodyUsed: response.bodyUsed,
-      headers: response.headers,
-      ok: response.ok,
-      redirected: response.redirected,
-      status: response.status,
-      statusText: response.statusText,
-      type: response.type,
-      url: response.url
+    const baseUrl = 'https://rootstock-testnet.blockscout.com//api';
+    const params = new URLSearchParams({
+      module: 'token',
+      action: 'getTokenHolders',
+      contractaddress: contractAddress,
+      page: page.toString(),
+      offset: offset.toString()
     });
+
+    const url = `${baseUrl}?${params.toString()}`;
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log("data!!!:", data);
-    return data;
+    console.log("Token holders data:", data);
+
+    // Check if the data has the expected structure
+    if (data.status === '1' && Array.isArray(data.result)) {
+      // Transform the data into a more usable format
+      const holders = data.result.map((holder: any) => ({
+        address: holder.address,
+        balance: parseFloat(holder.value) / 1e18 // Convert from wei to token units
+      }));
+      return {
+        success: true,
+        holders: holders,
+        totalCount: holders.length
+      };
+    } else {
+      throw new Error('Unexpected data structure from API');
+    }
   } catch (error) {
     console.error('Error fetching token holders:', error);
-    throw error;
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error)
+    };
   }
 }

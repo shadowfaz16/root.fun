@@ -51,7 +51,7 @@ export default function RootLayout({
     <html lang="en">
       <Providers>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen bg-[#121212] max-w-screen overflow-hidden`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen bg-[#121212] max-w-screen overflow-x-hidden`}
         >
           <DynamicContextProvider
             settings={{

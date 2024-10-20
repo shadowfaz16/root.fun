@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server';
+
 export async function generateLink() {
     try {
       const options = {
@@ -65,49 +67,56 @@ export async function getHoldersByAddress(tokenAddress: string) {
   }
 }
 
-export async function getTokenHolders(contractAddress: string, page: number = 1, offset: number = 100) {
-  try {
-    const baseUrl = 'https://rootstock-testnet.blockscout.com/api';
-    const params = new URLSearchParams({
-      module: 'token',
-      action: 'getTokenHolders',
-      contractaddress: contractAddress,
-      page: page.toString(),
-      offset: offset.toString()
-    });
-
-    const url = `${baseUrl}?${params.toString()}`;
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+export async function GET(request: Request) {
+    const { searchParams } = new URL(request.url);
+    const contractAddress = searchParams.get('contractAddress');
+    const page = searchParams.get('page') || '1';
+    const offset = searchParams.get('offset') || '100';
+  
+    if (!contractAddress) {
+      return NextResponse.json({ error: 'Contract address is required' }, { status: 400 });
     }
-
-    const data = await response.json();
-    console.log("Token holders data:", data);
-
-    // Check if the data has the expected structure
-    if (data.status === '1' && Array.isArray(data.result)) {
-      // Transform the data into a more usable format
-      const holders: Holder[] = data.result.map((holder: Holder) => ({
-        address: holder.address,
-        balance: parseFloat(holder.value) / 1e18 // Convert from wei to token units
-      }));
-      return {
-        success: true as boolean,
-        holders: holders,
-        totalCount: holders.length
-      };
-    } else {
-      throw new Error('Unexpected data structure from API');
+  
+    try {
+      const baseUrl = 'https://rootstock-testnet.blockscout.com/api';
+      const params = new URLSearchParams({
+        module: 'token',
+        action: 'getTokenHolders',
+        contractaddress: contractAddress,
+        page: page,
+        offset: offset
+      });
+  
+      const url = `${baseUrl}?${params.toString()}`;
+      const response = await fetch(url);
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log("Token holders data:", data);
+  
+      if (data.status === '1' && Array.isArray(data.result)) {
+        const holders = data.result.map((holder: any) => ({
+          address: holder.address,
+          balance: parseFloat(holder.value) / 1e18
+        }));
+        return NextResponse.json({
+          success: true,
+          holders: holders,
+          totalCount: holders.length
+        });
+      } else {
+        throw new Error('Unexpected data structure from API');
+      }
+    } catch (error) {
+      console.error('Error fetching token holders:', error);
+      return NextResponse.json({
+        success: false,
+        error: error instanceof Error ? error.message : String(error)
+      }, { status: 500 });
     }
-  } catch (error) {
-    console.error('Error fetching token holders:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : String(error)
-    };
-  }
 }
 
 interface Holder {

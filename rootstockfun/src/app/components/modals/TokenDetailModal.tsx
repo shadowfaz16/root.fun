@@ -16,7 +16,6 @@ import { toast } from "sonner";
 import { formatEther, parseEther } from "viem";
 import { getBalance } from "@wagmi/core";
 import { config } from "@/config";
-import { getTokenHolders } from "@/app/api/walruslinks/route";
 
 interface MemeToken {
   name: string;
@@ -71,11 +70,16 @@ const TokenDetail = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!tokenAddress) return;
-
+  
       try {
-        const ownersData = await getTokenHolders(tokenAddress);
-        setOwners(ownersData.holders || []);
-
+        const response = await fetch(`/api/walruslinks?contractAddress=${tokenAddress}`);
+        const data = await response.json();
+        if (data.success) {
+          setOwners(data.holders || []);
+        } else {
+          console.error("Error fetching token holders:", data.error);
+        }
+  
         await fetchTotalSupply();
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -83,7 +87,7 @@ const TokenDetail = () => {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [tokenAddress]);
 

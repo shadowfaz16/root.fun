@@ -45,24 +45,13 @@ const TokenDetail = () => {
     args: [tokenAddress],
   });
 
-  const totalRaised = getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0";
 
   console.log("getMemeToken", getMemeToken);
-
-  const [tokenDetails, setTokenDetails] = useState<MemeToken>({
-    name: "Unknown",
-    symbol: "Unknown",
-    description: "No description available",
-    tokenImageUrl: "https://via.placeholder.com/200",
-    fundingRaised: "0 ETH",
-    creatorAddress: "0x0000000000000000000000000000000000000000",
-  });
 
   const [owners, setOwners] = useState([]);
   const [transfers, setTransfers] = useState([]);
   const [userBalance, setUserBalance] = useState("0");
   const [loading, setLoading] = useState(true);
-  const [totalSupply, setTotalSupply] = useState("0");
   const [remainingTokens, setRemainingTokens] = useState("0");
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [cost, setCost] = useState("0");
@@ -133,7 +122,6 @@ const TokenDetail = () => {
     if (totalSupplyy) {
       const totalSupplyFormatted =
         (Number(totalSupplyy) / 10 ** 18) - 200000;
-      setTotalSupply(totalSupplyFormatted.toString());
       setRemainingTokens((maxSupply - totalSupplyFormatted).toString());
     }
   };
@@ -160,8 +148,7 @@ const TokenDetail = () => {
   );
   console.log("fundingRaisedPercentage", fundingRaisedPercentage);
   const totalSupplyPercentage =
-    ((parseFloat(totalSupply) - 200000) / (maxSupply - 200000)) * 100;
-
+    ((Number(totalSupplyy) / 10 ** 18 - 200000) / (maxSupply - 200000)) * 100;
   const getCost = async () => {
     if (!purchaseAmount || !tokenAddress) return;
 
@@ -303,7 +290,7 @@ const TokenDetail = () => {
               Remaining Tokens Available for Sale
             </h3>
             <p>
-              {Number(remainingTokens)} / {maxSupply}
+              {maxSupply - (Number(totalSupplyy) / 10 ** 18 - 200000)} / {maxSupply}
             </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div

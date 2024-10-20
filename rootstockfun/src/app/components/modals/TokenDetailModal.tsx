@@ -45,6 +45,8 @@ const TokenDetail = () => {
     args: [tokenAddress],
   });
 
+  const totalRaised = getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0";
+
   console.log("getMemeToken", getMemeToken);
 
   const [tokenDetails, setTokenDetails] = useState<MemeToken>({
@@ -65,6 +67,14 @@ const TokenDetail = () => {
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [cost, setCost] = useState("0");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { data: totalSupplyy } = useReadContract({
+    address: tokenAddress as `0x${string}`,
+    abi: tokenAbi,
+    functionName: "totalSupply",
+  });
+
+  console.log("totalSupplyy", (Number(totalSupplyy) / 10 ** 18));
 
 
   useEffect(() => {
@@ -119,10 +129,10 @@ const TokenDetail = () => {
 
   const fetchTotalSupply = async () => {
     if (!tokenAddress) return;
-    if (!totalSupply) return;
-    if (totalSupply) {
+    if (!totalSupplyy) return;
+    if (totalSupplyy) {
       const totalSupplyFormatted =
-        parseInt(ethers.formatUnits(totalSupply, "ether")) - 200000;
+        (Number(totalSupplyy) / 10 ** 18) - 200000;
       setTotalSupply(totalSupplyFormatted.toString());
       setRemainingTokens((maxSupply - totalSupplyFormatted).toString());
     }
@@ -141,7 +151,10 @@ const TokenDetail = () => {
   const maxSupply = 800000;
 
   const fundingRaisedPercentage = (
-    (parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") /
+    (parseFloat(
+      getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"
+    ) /
+      10 ** 18 /
       fundingGoal) *
     100
   );
@@ -253,7 +266,7 @@ const TokenDetail = () => {
             <strong>Token Address:</strong> {tokenAddress}
           </p>
           <p>
-            <strong>Funding Raised:</strong> {tokenDetails.fundingRaised}
+            <strong>Funding Raised:</strong> {parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") / 10 ** 18} ETH
           </p>
           <p>
             <strong>Token Symbol:</strong>{" "}
@@ -269,12 +282,12 @@ const TokenDetail = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">Bonding Curve Progress</h3>
             <p>
-              {getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"} /{" "}
-              {fundingGoal} ETH
+              {parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") / 10 ** 18} /{" "}
+              {fundingGoal} ETH raised
             </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
-                className="bg-blue-600 h-2.5 rounded-full"
+                className="bg-naranja h-2.5 rounded-full"
                 style={{ width: `${fundingRaisedPercentage}%` }}
               ></div>
             </div>

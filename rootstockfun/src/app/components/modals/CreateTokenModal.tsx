@@ -39,16 +39,7 @@ export default function CreateTokenModal({
     imageUrl: "",
   });
   const [step, setStep] = useState(1);
-  const { writeContract, data, isError, error, isPending } = useWriteContract({
-    mutation: {
-      onSuccess: () => {
-        toast.success("Token created successfully!");
-      },
-      onError: (error) => {
-        toast.error(`Error creating token: ${error.message}`);
-      },
-    },
-  });
+  const { writeContract, data, isError, error, isPending } = useWriteContract();
 
   const createToken = () => {
     writeContract({
@@ -63,6 +54,13 @@ export default function CreateTokenModal({
         0,
       ],
       value: BigInt(100000000000000),
+    }, {
+      onSuccess: () => {
+        toast.success("Token created successfully!");
+      },
+      onError: (error) => {
+        toast.error(`Error creating token: ${error.message}`);
+      },
     });
   };
 

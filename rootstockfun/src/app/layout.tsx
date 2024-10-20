@@ -21,9 +21,7 @@ const evmNetworks = [
       symbol: "RBTC",
     },
     networkId: 31,
-    rpcUrls: [
-      "https://31.rpc.thirdweb.com/${THIRDWEB_API_KEY}",
-    ],
+    rpcUrls: ["https://31.rpc.thirdweb.com/${THIRDWEB_API_KEY}"],
     vanityName: "Rootstock Testnet",
   },
 ];
@@ -53,7 +51,7 @@ export default function RootLayout({
     <html lang="en">
       <Providers>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen bg-[#121212] max-w-screen overflow-hidden`}
         >
           <DynamicContextProvider
             settings={{
@@ -64,9 +62,11 @@ export default function RootLayout({
               },
             }}
           >
-            <div className="flex flex-1">
-              <Sidebar />
-              <div className="flex flex-col flex-1">
+            <div className="flex flex-1 h-full">
+              <div className="hidden md:block h-full">
+                <Sidebar />
+              </div>
+              <div className="flex flex-col flex-1 h-full">
                 <Header />
                 <main className="flex-1">{children}</main>
               </div>

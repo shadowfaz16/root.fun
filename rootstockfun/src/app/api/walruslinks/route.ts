@@ -69,3 +69,44 @@ export async function getHoldersByAddress(tokenAddress: string) {
     throw error;
   }
 }
+
+export async function getTokenHolders() {
+  try {
+    const tokenAddress = "0x2E1474D466CA2827313e12b46E09520Cf72F8a14";
+    console.log("tokenAddress", tokenAddress);
+    const chainName = "rsk-testnet";
+    const baseUrl = 'https://api.covalenthq.com/v1';
+    const endpoint = `${baseUrl}/${chainName}/tokens/${tokenAddress}/token_holders_v2/`;
+    
+    const options = {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer cqt_rQB7YDDmdxVkwcB7HB3vhF78qYdc'
+      }
+    };
+
+    const response = await fetch(endpoint, options);
+    console.log("response", {
+      body: response.body,
+      bodyUsed: response.bodyUsed,
+      headers: response.headers,
+      ok: response.ok,
+      redirected: response.redirected,
+      status: response.status,
+      statusText: response.statusText,
+      type: response.type,
+      url: response.url
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("data!!!:", data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching token holders:', error);
+    throw error;
+  }
+}

@@ -41,27 +41,31 @@ export default function CreateTokenModal({
   const [step, setStep] = useState(1);
   const { writeContract, data, isError, error, isPending } = useWriteContract();
 
-  const createToken = () => {
-    writeContract({
-      abi,
-      address: "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06",
-      functionName: "createMemeToken",
-      args: [
-        tokenData.name,
-        tokenData.symbol,
-        tokenData.imageUrl,
-        tokenData.description,
-        0,
-      ],
-      value: BigInt(100000000000000),
-    }, {
-      onSuccess: () => {
-        toast.success("Token created successfully!");
+  const createToken = async () => {
+    const tx = await writeContract(
+      {
+        abi,
+        address: "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06",
+        functionName: "createMemeToken",
+        args: [
+          tokenData.name,
+          tokenData.symbol,
+          tokenData.imageUrl,
+          tokenData.description,
+          0,
+        ],
+        value: BigInt(100000000000000),
       },
-      onError: (error) => {
-        toast.error(`Error creating token: ${error.message}`);
-      },
-    });
+      {
+        onSuccess: () => {
+          toast.success("Token created successfully!");
+        },
+        onError: (error) => {
+          toast.error(`Error creating token: ${error.message}`);
+        },
+      }
+    );
+    console.log("tx: ", tx);
   };
 
   const handleGenerateLink = async () => {
@@ -105,7 +109,7 @@ export default function CreateTokenModal({
       onClick={onClose}
     >
       <div
-        className="bg-[#252525] rounded-lg p-8 w-full max-w-xl"
+        className="bg-[#252525] rounded-lg p-4 md:p-8 w-full max-w-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button onClick={getFillerItemsCall}>Get Filler Items</button>
@@ -255,7 +259,7 @@ export default function CreateTokenModal({
               </div>
             </>
           )}
-          <div className="mt-8 flex justify-end space-x-4">
+          <div className="mt-4 md:mt-8 flex flex-col md:flex-row justify-end md:space-x-4">
             <button
               type="button"
               className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 px-6 py-3 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
@@ -307,13 +311,13 @@ export default function CreateTokenModal({
                 )}
               </button>
             )}
-            <button
+            {/* <button
               type="button"
               className="inline-flex justify-center rounded-md border border-transparent bg-rosa px-6 py-3  text-black text-sm font-semibold hover:bg-rosa focus:outline-none focus:ring-2 focus:ring-rosa"
               onClick={handleGenerateLink}
             >
               Generate Link
-            </button>
+            </button> */}
           </div>
         </form>
       </div>

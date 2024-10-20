@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { formatEther, parseEther, parseUnits } from "viem";
 import { getBalance } from "@wagmi/core";
 import { config } from "@/config";
+import { getTokenHolders } from "@/app/api/walruslinks/route";
 
 interface MemeToken {
   name: string;
@@ -45,7 +46,6 @@ const TokenDetail = () => {
     args: [tokenAddress],
   });
 
-
   console.log("getMemeToken", getMemeToken);
 
   const [owners, setOwners] = useState([]);
@@ -56,6 +56,7 @@ const TokenDetail = () => {
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [cost, setCost] = useState("0");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tokenHolders, setTokenHolders] = useState([]);
 
   const { data: totalSupplyy } = useReadContract({
     address: tokenAddress as `0x${string}`,
@@ -63,25 +64,34 @@ const TokenDetail = () => {
     functionName: "totalSupply",
   });
 
-  console.log("totalSupplyy", (Number(totalSupplyy) / 10 ** 18));
-
+  console.log("totalSupplyy", Number(totalSupplyy) / 10 ** 18);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!tokenAddress) return;
-
       try {
-        // const [ownersData, transfersData] = await Promise.all([
-        //   fetchOwners(),
-        //   fetchTransfers(),
-        // ]);
+        setLoading(true);
+        const tokenHoldersData = await getTokenHolders();
+        console.log("tokenHoldersData", tokenHoldersData);
 
-        // setOwners(ownersData.result || []);
-        // setTransfers(transfersData.result || []);
+        if (
+          tokenHoldersData &&
+          tokenHoldersData.data &&
+          tokenHoldersData.data.items
+        ) {
+          setTokenHolders(tokenHoldersData.data.items);
+        } else {
+          console.error(
+            "Unexpected tokenHoldersData structure:",
+            tokenHoldersData
+          );
+          setTokenHolders([]);
+        }
 
         await fetchTotalSupply();
       } catch (error) {
         console.error("Error fetching data:", error);
+        setTokenHolders([]);
       } finally {
         setLoading(false);
       }
@@ -89,6 +99,8 @@ const TokenDetail = () => {
 
     fetchData();
   }, [tokenAddress]);
+
+  console.log("tokenHolders", tokenHolders);
 
   const fetchOwners = async () => {
     const response = await fetch(
@@ -120,8 +132,7 @@ const TokenDetail = () => {
     if (!tokenAddress) return;
     if (!totalSupplyy) return;
     if (totalSupplyy) {
-      const totalSupplyFormatted =
-        (Number(totalSupplyy) / 10 ** 18) - 200000;
+      const totalSupplyFormatted = Number(totalSupplyy) / 10 ** 18 - 200000;
       setRemainingTokens((maxSupply - totalSupplyFormatted).toString());
     }
   };
@@ -138,14 +149,13 @@ const TokenDetail = () => {
   const fundingGoal = 0.1;
   const maxSupply = 800000;
 
-  const fundingRaisedPercentage = (
+  const fundingRaisedPercentage =
     (parseFloat(
       getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"
     ) /
       10 ** 18 /
       fundingGoal) *
-    100
-  );
+    100;
   console.log("fundingRaisedPercentage", fundingRaisedPercentage);
   const totalSupplyPercentage =
     ((Number(totalSupplyy) / 10 ** 18 - 200000) / (maxSupply - 200000)) * 100;
@@ -236,28 +246,47 @@ const TokenDetail = () => {
         <div className="space-y-4">
           <h2 className="text-2xl font-bold">
             Token Detail for{" "}
-            {getMemeToken ? (getMemeToken as MemeToken).name.toString() : "Unknown"}
+            {getMemeToken
+              ? (getMemeToken as MemeToken).name.toString()
+              : "Unknown"}
           </h2>
           <Image
-            src={getMemeToken ? (getMemeToken as MemeToken).tokenImageUrl : coinImage}
-            alt={getMemeToken ? (getMemeToken as MemeToken).tokenImageUrl : "Unknown"}
+            src={
+              getMemeToken
+                ? (getMemeToken as MemeToken).tokenImageUrl
+                : coinImage
+            }
+            alt={
+              getMemeToken
+                ? (getMemeToken as MemeToken).tokenImageUrl
+                : "Unknown"
+            }
             width={250}
             height={250}
             className="rounded-lg"
           />
           <p>
             <strong>Creator Address:</strong>{" "}
-            {getMemeToken ? (getMemeToken as MemeToken).creatorAddress.toString() : "Unknown"}
+            {getMemeToken
+              ? (getMemeToken as MemeToken).creatorAddress.toString()
+              : "Unknown"}
           </p>
           <p>
             <strong>Token Address:</strong> {tokenAddress}
           </p>
           <p>
-            <strong>Funding Raised:</strong> {parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") / 10 ** 18} ETH
+            <strong>Funding Raised:</strong>{" "}
+            {parseFloat(
+              getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"
+            ) /
+              10 ** 18}{" "}
+            ETH
           </p>
           <p>
             <strong>Token Symbol:</strong>{" "}
-            {getMemeToken ? (getMemeToken as MemeToken).symbol.toString() : "Unknown"}
+            {getMemeToken
+              ? (getMemeToken as MemeToken).symbol.toString()
+              : "Unknown"}
           </p>
           <p>
             <strong>Description:</strong>{" "}
@@ -269,8 +298,11 @@ const TokenDetail = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">Bonding Curve Progress</h3>
             <p>
-              {parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") / 10 ** 18} /{" "}
-              {fundingGoal} ETH raised
+              {parseFloat(
+                getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"
+              ) /
+                10 ** 18}{" "}
+              / {fundingGoal} ETH raised
             </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
@@ -290,12 +322,16 @@ const TokenDetail = () => {
               Remaining Tokens Available for Sale
             </h3>
             <p>
-              {maxSupply - (Number(totalSupplyy) / 10 ** 18 - 200000)} / {maxSupply}
+              {(
+                maxSupply -
+                (Number(totalSupplyy) / 10 ** 18 - 200000)
+              ).toLocaleString()}{" "}
+              / {maxSupply.toLocaleString()}
             </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
                 className="bg-aqua h-2.5 rounded-full"
-                style={{ width: `${totalSupplyPercentage}%` }}
+                style={{ width: `${100 - totalSupplyPercentage}%` }}
               ></div>
             </div>
           </div>

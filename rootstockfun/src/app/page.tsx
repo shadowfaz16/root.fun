@@ -106,21 +106,23 @@ export default function Homepage() {
   return (
     <div className="flex h-screen bg-[#121212] text-white">
       <div className="flex-1 flex flex-col">
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-4 md:p-6 overflow-auto">
           {activeTab === "recent" && (
             <section className="mb-6">
               <h2 className="text-3xl font-bold">New Launches</h2>
               <p className="text-white mb-4">
-                Discover the next trending token, {" "}
+                Discover the next trending token,{" "}
                 <span className="font-semibold">before everyone else!</span>
               </p>
-              <div className="flex items-center gap-2 mb-6">
-                <button className="bg-rosa text-black font-bold text-sm hover:bg-rosa transition-all duration-300 px-4 py-2 rounded-md shadow-md hover:shadow-lg"
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-2 mb-6">
+                <button
+                  className="bg-rosa text-black font-bold text-sm hover:bg-rosa transition-all duration-300 px-4 py-2 rounded-md shadow-md hover:shadow-lg"
                   onClick={() => setIsHowItWorksModalOpen(true)}
                 >
                   How does it work?
                 </button>
-                <button className="bg-verdeFosfo text-black font-bold text-sm hover:bg-verdeFosfo transition-all duration-300 px-4 py-2 rounded-md shadow-md hover:shadow-lg ml-2"
+                <button
+                  className="bg-verdeFosfo text-black font-bold text-sm hover:bg-verdeFosfo transition-all duration-300 px-4 py-2 rounded-md shadow-md hover:shadow-lg md:ml-2"
                   onClick={() => setIsCreateTokenModalOpen(true)}
                 >
                   Launch your token
@@ -129,66 +131,90 @@ export default function Homepage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {result.isLoading ? (
                   // Display loading skeletons while data is loading
-                  Array(4).fill(0).map((_, index) => (
-                    <LoadingSkeleton key={index} />
-                  ))
+                  Array(4)
+                    .fill(0)
+                    .map((_, index) => <LoadingSkeleton key={index} />)
                 ) : result.data &&
                   Array.isArray(result.data) &&
                   result.data.length > 0 ? (
-                  [...result.data].reverse().map((token: Token, index: number) => (
-                    <Link
-                      href={`/token/${token.tokenAddress}`}
-                      key={index}
-                      className="bg-[#252525] rounded-xl shadow-lg hover:shadow-2xl transition duration-300 p-4 relative"
-                    >
-                      <div className="flex gap-4 items-center pb-4 border-b border-gray-700 mb-4">
-                        {token.tokenImageUrl && token.tokenImageUrl !== "" && !token.tokenImageUrl.includes("ipfs://") && !token.tokenImageUrl.includes("google") ? (
-                          <img
-                            src={token.tokenImageUrl}
-                            alt="Coin"
-                            className="w-20 h-20 rounded-lg"
-                          />
-                        ) : (
-                          <img
-                            src={coinGif.src}
-                            alt="Coin"
-                            className="w-20 h-20 rounded-lg"
-                          />
-                        )}
-                        <div className="">
-                          <div className="text-xl font-semibold mb-1">
-                            <span className="text-gray-400 mr-2 uppercase text-lg">
-                              ${token.symbol}
-                            </span>
-                            {token.name}
+                  [...result.data]
+                    .reverse()
+                    .map((token: Token, index: number) => (
+                      <Link
+                        href={`/token/${token.tokenAddress}`}
+                        key={index}
+                        className="bg-[#252525] rounded-xl shadow-lg hover:shadow-2xl transition duration-300 p-3 md:p-4 relative"
+                      >
+                        <div className="flex gap-4 items-center pb-4 border-b border-gray-700 mb-2 md:mb-4">
+                          {token.tokenImageUrl &&
+                          token.tokenImageUrl !== "" &&
+                          !token.tokenImageUrl.includes("ipfs://") &&
+                          !token.tokenImageUrl.includes("google") ? (
+                            <img
+                              src={token.tokenImageUrl}
+                              alt="Coin"
+                              className="w-16 md:w-20 h-16 md:h-20 rounded"
+                            />
+                          ) : (
+                            <img
+                              src={coinGif.src}
+                              alt="Coin"
+                              className="w-16 md:w-20 h-16 md:h-20 rounded"
+                            />
+                          )}
+                          <div className="">
+                            <div className="md:text-xl font-semibold mb-1">
+                              <span className="text-gray-400 mr-1 md:mr-2 uppercase md:text-lg">
+                                ${token.symbol}
+                              </span>
+                              {(token.symbol + token.name).length > 10
+                                ? `${token.name.slice(0, 8)}...`
+                                : token.name}
+                            </div>
+                            <p className="text-gray-400 text-sm">
+                              {token.description}
+                            </p>
                           </div>
-                          <p className="text-gray-400 text-sm">
-                            {token.description}
-                          </p>
                         </div>
-                      </div>
-                      <div className="flex items-center justify-between gap-2">
-                      <p className="text-gray-400 text-sm">
-                        created by: {token.creatorAddress.slice(0, 4)}...
-                        {token.creatorAddress.slice(-4)}
-                      </p>
-                      <p className="text-gray-400 text-sm mb-2">
-                        funding raised:{" "}
-                        {token.fundingRaised > 0
-                          ? (
-                              Number(token.fundingRaised) / 1000000000000000000
-                            ).toFixed(2)
-                          : "0"}{" "}
-                        RBTC
-                      </p>
-                      </div>
-                      <div className="absolute top-4 right-4 flex items-center justify-center gap-2">
-                        <FaGlobe />
-                        <FaTwitter />
-                        <FaTelegramPlane />
-                      </div>
-                    </Link>
-                  ))
+                        <div>
+                          <div className="mb-1">
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="text-sm text-gray-400">
+                                Funding Progress
+                              </span>
+                              <span className="text-sm text-gray-400">
+                                {(
+                                  (Number(token.fundingRaised) /
+                                    10 ** 18 /
+                                    0.1) *
+                                  100
+                                ).toFixed(2)}
+                                %
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-700 rounded-full h-2.5">
+                              <div
+                                className="bg-verdeFosfo h-2.5 rounded-full"
+                                style={{
+                                  width: `${Math.min(
+                                    (Number(token.fundingRaised) /
+                                      10 ** 18 /
+                                      0.1) *
+                                      100,
+                                    100
+                                  )}%`,
+                                }}
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="absolute top-3 md:top-4 right-3 md:right-4 flex items-center justify-center gap-2">
+                          <FaGlobe className="text-gray-400 hover:text-aqua transition-all duration-300 cursor-pointer" />
+                          <FaTwitter className="text-gray-400 hover:text-aqua transition-all duration-300 cursor-pointer" />
+                          <FaTelegramPlane className="text-gray-400 hover:text-aqua transition-all duration-300 cursor-pointer" />
+                        </div>
+                      </Link>
+                    ))
                 ) : (
                   <div>No tokens found</div>
                 )}
@@ -199,33 +225,36 @@ export default function Homepage() {
             <section>
               <h2 className="text-3xl font-bold mb-6">Hot Tokens</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {hotTokens.slice().reverse().map((token, index) => (
-                  <div
-                    key={index}
-                    className="bg-[#252525] p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300"
-                  >
-                    <div className="flex justify-between items-center mb-4">
-                      <div className="text-4xl">{token.icon}</div>
-                      {token.kyc && (
-                        <div className="bg-green-500 text-xs font-bold px-2 py-1 rounded-full">
-                          KYC
-                        </div>
-                      )}
+                {hotTokens
+                  .slice()
+                  .reverse()
+                  .map((token, index) => (
+                    <div
+                      key={index}
+                      className="bg-[#252525] p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300"
+                    >
+                      <div className="flex justify-between items-center mb-4">
+                        <div className="text-4xl">{token.icon}</div>
+                        {token.kyc && (
+                          <div className="bg-green-500 text-xs font-bold px-2 py-1 rounded-full">
+                            KYC
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-xl font-semibold mb-2">
+                        {token.name}
+                      </div>
+                      <div className="text-green-500 font-bold mb-4">
+                        {token.stats}
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-2.5">
+                        <div
+                          className="bg-orange-500 h-2.5 rounded-full"
+                          style={{ width: `${token.progress}%` }}
+                        ></div>
+                      </div>
                     </div>
-                    <div className="text-xl font-semibold mb-2">
-                      {token.name}
-                    </div>
-                    <div className="text-green-500 font-bold mb-4">
-                      {token.stats}
-                    </div>
-                    <div className="w-full bg-gray-700 rounded-full h-2.5">
-                      <div
-                        className="bg-orange-500 h-2.5 rounded-full"
-                        style={{ width: `${token.progress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </section>
           )}
@@ -236,13 +265,11 @@ export default function Homepage() {
         onClose={() => setIsCreateTokenModalOpen(false)}
         onSubmit={() => {}}
       />
-      {
-        isHowItWorksModalOpen && (
-          <HowItWorksModal
-            toggleModal={() => setIsHowItWorksModalOpen(!isHowItWorksModalOpen)}
-          />
-        )
-      }
+      {isHowItWorksModalOpen && (
+        <HowItWorksModal
+          toggleModal={() => setIsHowItWorksModalOpen(!isHowItWorksModalOpen)}
+        />
+      )}
     </div>
   );
 }

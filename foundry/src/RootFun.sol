@@ -23,7 +23,7 @@ contract RootFun {
 
     uint constant MEMETOKEN_CREATION_PLATFORM_FEE = 0 ether;
     uint constant MEMECOIN_FUNDING_DEADLINE_DURATION = 10 days;
-    uint constant MEMECOIN_FUNDING_GOAL = .1 ether;
+    uint constant MEMECOIN_FUNDING_GOAL = .05 ether;
 
     address constant UNISWAP_V2_FACTORY_ADDRESS = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
     address constant UNISWAP_V2_ROUTER_ADDRESS = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
@@ -36,6 +36,8 @@ contract RootFun {
     uint256 public constant INITIAL_PRICE = 30000000000000;  // Initial price in wei (P0), 3.00 * 10^13
     uint256 public constant K = 8 * 10**15;  // Growth rate (k), scaled to avoid precision loss (0.01 * 10^18)
 
+    event MemeTokenCreated(address indexed memeTokenAddress, string name, string symbol, string description, address creatorAddress);
+    
     // Function to calculate the cost in wei for purchasing `tokensToBuy` starting from `currentSupply`
     function calculateCost(uint256 currentSupply, uint256 tokensToBuy) public pure returns (uint256) {
         
@@ -70,11 +72,11 @@ contract RootFun {
         return sum;
     }
 
-    function createMemeToken(string memory name, string memory symbol, string memory imageUrl, string memory description) public payable returns(address) {
+    function createMemeToken(string memory name, string memory symbol, string memory imageUrl, string memory description, address[] memory airdropReceiver, uint airdropQty) public payable returns(address) {
 
         //should deploy the meme token, mint the initial supply to the token factory contract
         require(msg.value>= MEMETOKEN_CREATION_PLATFORM_FEE, "fee not paid for memetoken creation");
-        Token ct = new Token(name, symbol, INIT_SUPPLY);
+        Token ct = new Token(name, symbol, INIT_SUPPLY, airdropReceiver, airdropQty);
         address memeTokenAddress = address(ct);
         memeToken memory newlyCreatedToken = memeToken(name, symbol, description, imageUrl, 0, memeTokenAddress, msg.sender);
         memeTokenAddresses.push(memeTokenAddress);
@@ -88,6 +90,10 @@ contract RootFun {
             allTokens[i] = addressToMemeTokenMapping[memeTokenAddresses[i]];
         }
         return allTokens;
+    }
+
+    function getMemeToken(address memeTokenAddress) public view returns(memeToken memory) {
+        return addressToMemeTokenMapping[memeTokenAddress];
     }
 
     function buyMemeToken(address memeTokenAddress, uint tokenQty) public payable returns(uint) {

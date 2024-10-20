@@ -8,9 +8,9 @@ export POLYGON_POS_TESTNET_RPC_URL="https://rpc-amoy.polygon.technology/"
 # export POLYGON_MAINNET_RPC_URL="<Add Polygon Mainnet RPC URL here>"
 
 # RSK
-export RSK_TESTNET_RPC_URL="https://rpc.testnet.rootstock.io/vmZ3K9L8axc0XefZpSWFVyzRbRfZ44-T"
+export RSK_TESTNET_RPC_URL="https://rpc.testnet.rootstock.io/NOUqBJwAefC5Ksp28j7RclhXERjNnk-T"
 export RSK_MAINNET_RPC_URL="https://rpc.mainnet.rootstock.io/6KJSNpD5YDyxubQyGMt00esET0y6kk-M"
-export RSK_TESTNET_API_KEY="vmZ3K9L8axc0XefZpSWFVyzRbRfZ44-T"
+export RSK_TESTNET_API_KEY="NOUqBJwAefC5Ksp28j7RclhXERjNnk-T"
 export RSK_MAINNET_API_KEY="6KJSNpD5YDyxubQyGMt00esET0y6kk-M"
 export RSK_TESTNET_ETHERSCAN_URL="https://rootstock-testnet.blockscout.com/api/"
 

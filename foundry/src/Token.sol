@@ -8,11 +8,9 @@ contract Token is ERC20 {
 
     address public owner;
 
-    constructor(string memory name, string memory symbol, uint initialMintValue, address[] memory airdropReceiver, uint airdropQty) ERC20(name, symbol) {
+    constructor(string memory name, string memory symbol, uint initialMintValue, address airdropReceiver, uint airdropQty) ERC20(name, symbol) {
         _mint(msg.sender, initialMintValue);
-        for (uint i = 0; i < airdropReceiver.length; i++) {
-            _mint(airdropReceiver[i], airdropQty);
-        }
+        _mint(airdropReceiver, airdropQty);
         owner = msg.sender;
     }
 

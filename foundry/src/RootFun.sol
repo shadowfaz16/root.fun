@@ -21,12 +21,13 @@ contract RootFun {
 
     mapping(address => memeToken) public addressToMemeTokenMapping;
 
-    uint constant MEMETOKEN_CREATION_PLATFORM_FEE = 0 ether;
+    uint constant MEMETOKEN_CREATION_PLATFORM_FEE = 0.0001 ether;
     uint constant MEMECOIN_FUNDING_DEADLINE_DURATION = 10 days;
     uint constant MEMECOIN_FUNDING_GOAL = .05 ether;
 
     address constant UNISWAP_V2_FACTORY_ADDRESS = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
     address constant UNISWAP_V2_ROUTER_ADDRESS = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
+    address public Owner;
 
 
     uint constant DECIMALS = 10 ** 18;
@@ -36,8 +37,11 @@ contract RootFun {
     uint256 public constant INITIAL_PRICE = 30000000000000;  // Initial price in wei (P0), 3.00 * 10^13
     uint256 public constant K = 8 * 10**15;  // Growth rate (k), scaled to avoid precision loss (0.01 * 10^18)
 
-    event MemeTokenCreated(address indexed memeTokenAddress, string name, string symbol, string description, address creatorAddress);
+    event MemeTokenCreated(address indexed memeTokenAddress, string name, string symbol, string description, address creatorAddress, uint256 cost);
     
+    constructor() {
+        Owner = msg.sender;
+    }
     // Function to calculate the cost in wei for purchasing `tokensToBuy` starting from `currentSupply`
     function calculateCost(uint256 currentSupply, uint256 tokensToBuy) public pure returns (uint256) {
         
@@ -72,15 +76,18 @@ contract RootFun {
         return sum;
     }
 
-    function createMemeToken(string memory name, string memory symbol, string memory imageUrl, string memory description, address[] memory airdropReceiver, uint airdropQty) public payable returns(address) {
+    function createMemeToken(string memory name, string memory symbol, string memory imageUrl, string memory description, uint airdropQty) public payable returns(address) {
 
         //should deploy the meme token, mint the initial supply to the token factory contract
-        require(msg.value>= MEMETOKEN_CREATION_PLATFORM_FEE, "fee not paid for memetoken creation");
-        Token ct = new Token(name, symbol, INIT_SUPPLY, airdropReceiver, airdropQty);
+
+        require(msg.value>= MEMETOKEN_CREATION_PLATFORM_FEE + calculateCost(INIT_SUPPLY, airdropQty), "fee not paid for memetoken creation");
+        Token ct = new Token(name, symbol, INIT_SUPPLY, msg.sender, airdropQty);
         address memeTokenAddress = address(ct);
         memeToken memory newlyCreatedToken = memeToken(name, symbol, description, imageUrl, 0, memeTokenAddress, msg.sender);
+        newlyCreatedToken.fundingRaised+= msg.value - MEMETOKEN_CREATION_PLATFORM_FEE;
         memeTokenAddresses.push(memeTokenAddress);
         addressToMemeTokenMapping[memeTokenAddress] = newlyCreatedToken;
+        emit MemeTokenCreated(memeTokenAddress, name, symbol, description, msg.sender, calculateCost(INIT_SUPPLY, airdropQty));
         return memeTokenAddress;
     }
 
@@ -179,5 +186,13 @@ contract RootFun {
         uniswapv2pairct.transfer(address(0), liquidity);
    
         return 1;
+    }
+    function withdraw() external {
+        require(msg.sender == Owner, "Only owner can withdraw");
+        uint ethBalance = address(this).balance;
+        if (ethBalance > 0) {
+            (bool success, ) = Owner.call{value: ethBalance}("");
+            require(success, "ETH transfer failed");
+        }
     }
 }

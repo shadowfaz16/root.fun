@@ -16,6 +16,7 @@ interface TokenData {
   twitter?: string;
   telegram?: string;
   description?: string;
+  imageUrl?: string;
 }
 
 export default function CreateTokenModal({
@@ -31,6 +32,7 @@ export default function CreateTokenModal({
     website: "",
     twitter: "",
     telegram: "",
+    imageUrl: "",
   });
   const [showAdvanced, setShowAdvanced] = useState(false);
   const { writeContract, data, isError, error } = useWriteContract();
@@ -43,7 +45,7 @@ export default function CreateTokenModal({
       args: [
         tokenData.name,
         tokenData.symbol,
-        "https://google.com",
+        tokenData.imageUrl,
         tokenData.description,
       ],
       value: BigInt(100000000000000),
@@ -109,6 +111,24 @@ export default function CreateTokenModal({
               className="mt-1 block w-full rounded-md bg-[#3a3a3a] border-gray-600 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 px-4 py-3"
               required
               placeholder="Enter token symbol"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="imageUrl"
+              className="block text-sm font-medium text-gray-300 mb-2"
+            >
+              Image URL
+            </label>
+            <input
+              type="url"
+              name="imageUrl"
+              id="imageUrl"
+              value={tokenData.imageUrl}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md bg-[#3a3a3a] border-gray-600 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 px-4 py-3"
+              required
+              placeholder="Enter image URL"
             />
           </div>
           <div>

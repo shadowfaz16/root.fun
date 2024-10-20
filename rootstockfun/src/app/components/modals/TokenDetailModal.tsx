@@ -8,13 +8,22 @@ import abi from "@/factoryabi.json";
 import tokenAbi from "@/tokenabi.json";
 import coinImage from "@/assets/rootstock-coin-2.gif";
 import { usePathname } from "next/navigation";
-import { useWriteContract, useAccount, useReadContract } from "wagmi";
+import {
+  useWriteContract,
+  useAccount,
+  useReadContract,
+  useBalance,
+} from "wagmi";
 import { toast } from "sonner";
+import { formatEther, parseEther, parseUnits } from "viem";
+import { getBalance } from "@wagmi/core";
+import { config } from "@/config";
 
 const TokenDetail = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { address } = useAccount();
+  const factoryAddress = "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4";
   const [tokenAddress, setTokenAddress] = useState<string | null>(
     pathname.split("/")[2]
   );
@@ -29,6 +38,7 @@ const TokenDetail = () => {
 
   const [owners, setOwners] = useState([]);
   const [transfers, setTransfers] = useState([]);
+  const [userBalance, setUserBalance] = useState("0");
   const [loading, setLoading] = useState(true);
   const [totalSupply, setTotalSupply] = useState("0");
   const [remainingTokens, setRemainingTokens] = useState("0");
@@ -40,18 +50,20 @@ const TokenDetail = () => {
     tokenDetails.fundingRaised.replace(" ETH", "")
   );
 
+  console.log("fundingRaised", fundingRaised);
+
   useEffect(() => {
     const fetchData = async () => {
       if (!tokenAddress) return;
 
       try {
-        const [ownersData, transfersData] = await Promise.all([
-          fetchOwners(),
-          fetchTransfers(),
-        ]);
+        // const [ownersData, transfersData] = await Promise.all([
+        //   fetchOwners(),
+        //   fetchTransfers(),
+        // ]);
 
-        setOwners(ownersData.result || []);
-        setTransfers(transfersData.result || []);
+        // setOwners(ownersData.result || []);
+        // setTransfers(transfersData.result || []);
 
         await fetchTotalSupply();
       } catch (error) {
@@ -77,40 +89,44 @@ const TokenDetail = () => {
     return response.json();
   };
 
-  const fetchTransfers = async () => {
-    const response = await fetch(
-      `https://deep-index.moralis.io/api/v2.2/erc20/${tokenAddress}/transfers?chain=sepolia&order=DESC`,
-      {
-        headers: {
-          accept: "application/json",
-          "X-API-Key": process.env.NEXT_PUBLIC_X_API_KEY || "",
-        },
-      }
-    );
-    return response.json();
-  };
+  //   const fetchTransfers = async () => {
+  //     const response = await fetch(
+  //       `https://deep-index.moralis.io/api/v2.2/erc20/${tokenAddress}/transfers?chain=sepolia&order=DESC`,
+  //       {
+  //         headers: {
+  //           accept: "application/json",
+  //           "X-API-Key": process.env.NEXT_PUBLIC_X_API_KEY || "",
+  //         },
+  //       }
+  //     );
+  //     return response.json();
+  //   };
 
   const fetchTotalSupply = async () => {
     if (!tokenAddress) return;
-    
-    const { data: totalSupplyResponse } = useReadContract({
-      address: tokenAddress as `0x${string}`,
-      abi: tokenAbi,
-      functionName: 'totalSupply',
-    });
-
-    if (totalSupplyResponse) {
+    if (!totalSupply) return;
+    if (totalSupply) {
       const totalSupplyFormatted =
-        parseInt(ethers.formatUnits(totalSupplyResponse as bigint, "ether")) - 200000;
+        parseInt(ethers.formatUnits(totalSupply, "ether")) - 200000;
       setTotalSupply(totalSupplyFormatted.toString());
       setRemainingTokens((maxSupply - totalSupplyFormatted).toString());
     }
   };
 
+  const { data: costInWei } = useReadContract({
+    address: factoryAddress,
+    abi: abi,
+    functionName: "calculateCost",
+    args: [remainingTokens, purchaseAmount],
+  });
+
+  console.log("costInWei", costInWei);
+
   const fundingGoal = 0.1;
   const maxSupply = 800000;
 
   const fundingRaisedPercentage = (fundingRaised / fundingGoal) * 100;
+  console.log("fundingRaisedPercentage", fundingRaisedPercentage);
   const totalSupplyPercentage =
     ((parseFloat(totalSupply) - 200000) / (maxSupply - 200000)) * 100;
 
@@ -118,13 +134,8 @@ const TokenDetail = () => {
     if (!purchaseAmount || !tokenAddress) return;
 
     try {
-      const { data: costInWei } = await useReadContract({
-        address: tokenAddress as `0x${string}`,
-        abi: tokenAbi,
-        functionName: 'calculateCost',
-        args: [remainingTokens, purchaseAmount],
-      });
-      setCost(ethers.formatUnits(costInWei as bigint, "ether"));
+      setCost(formatEther(costInWei as bigint));
+      setIsModalOpen(true); // Open the confirmation modal after getting the cost
     } catch (error) {
       console.error("Error calculating cost:", error);
       toast.error("Error calculating cost. Please try again.");
@@ -135,6 +146,7 @@ const TokenDetail = () => {
     mutation: {
       onError: (error) => {
         toast.error(`Error during purchase: ${error.message}`);
+        console.log("error!!!", error);
       },
       onSuccess: () => {
         toast.success("Purchase successful!");
@@ -143,25 +155,82 @@ const TokenDetail = () => {
     },
   });
 
-  const handlePurchase = async () => {
+  const handlePurchase = () => {
     if (!tokenAddress || !address) {
       toast.error("Please connect your wallet first.");
+      console.log("no address");
+      return;
+    }
+    if (!cost) {
+      toast.error("Please calculate the cost first.");
+      console.log("no cost");
+      return;
+    }
+    if (!purchaseAmount) {
+      toast.error("Please enter the amount of tokens to buy.");
+      console.log("no purchase amount");
       return;
     }
 
     try {
-      writeContract({
-        abi: tokenAbi,
-        address: tokenAddress as `0x${string}`,
+      toast.info("Sending purchase transaction...");
+      console.log("cost final", costInWei);
+      console.log("purchaseAmount", parseEther(purchaseAmount));
+      const tx = writeContract({
+        abi: abi,
+        address: factoryAddress,
         functionName: "buyMemeToken",
-        args: [purchaseAmount],
-        value: ethers.parseEther(cost),
+        args: [tokenAddress, purchaseAmount],
+        value: parseEther(cost),
       });
+      // Remove duplicate success messages
+      toast.success("Purchase transaction sent!");
+      // fetchTotalSupply is already called in the onSuccess callback
+      console.log("tx", tx);
     } catch (error) {
       console.error("Error during purchase:", error);
       toast.error("Error during purchase. Please try again.");
     }
   };
+
+  const { data: tokenName } = useReadContract({
+    address: tokenAddress as `0x${string}`,
+    abi: tokenAbi,
+    functionName: "name",
+  });
+
+  const { data: tokenSymbol } = useReadContract({
+    address: tokenAddress as `0x${string}`,
+    abi: tokenAbi,
+    functionName: "symbol",
+  });
+
+  const { data: tokenTotalSupply } = useReadContract({
+    address: tokenAddress as `0x${string}`,
+    abi: tokenAbi,
+    functionName: "totalSupply",
+  });
+
+  const { data: contractOwner } = useReadContract({
+    address: tokenAddress as `0x${string}`,
+    abi: tokenAbi,
+    functionName: "owner",
+  });
+
+  const balance = getBalance(config, {
+    address: address as `0x${string}`,
+    token: tokenAddress as `0x${string}`,
+  });
+
+  console.log("balanceeee", balance);
+
+  console.log("tokenName", tokenName);
+  console.log("tokenSymbol", tokenSymbol);
+  console.log("tokenTotalSupply!!", tokenTotalSupply);
+  console.log("contractOwner", contractOwner);
+  console.log("costInWei", costInWei);
+  console.log("purchaseAmount", purchaseAmount);
+  console.log("remainingTokens", remainingTokens);
 
   return (
     <div className="container mx-auto p-6 bg-[#121212]">
@@ -175,17 +244,18 @@ const TokenDetail = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <h2 className="text-2xl font-bold">
-            Token Detail for {tokenDetails.name}
+            Token Detail for {tokenName ? tokenName.toString() : "Unknown"}
           </h2>
           <Image
             src={coinImage}
-            alt={tokenDetails.name}
+            alt={tokenName ? tokenName.toString() : "Unknown"}
             width={250}
             height={250}
             className="rounded-lg"
           />
           <p>
-            <strong>Creator Address:</strong> {tokenDetails.creatorAddress}
+            <strong>Creator Address:</strong>{" "}
+            {contractOwner ? contractOwner.toString() : "Unknown"}
           </p>
           <p>
             <strong>Token Address:</strong> {tokenAddress}
@@ -194,7 +264,8 @@ const TokenDetail = () => {
             <strong>Funding Raised:</strong> {tokenDetails.fundingRaised}
           </p>
           <p>
-            <strong>Token Symbol:</strong> {tokenDetails.symbol}
+            <strong>Token Symbol:</strong>{" "}
+            {tokenSymbol ? tokenSymbol.toString() : "Unknown"}
           </p>
           <p>
             <strong>Description:</strong> {tokenDetails.description}
@@ -224,7 +295,9 @@ const TokenDetail = () => {
             <h3 className="text-xl font-semibold">
               Remaining Tokens Available for Sale
             </h3>
-            <p>{remainingTokens} / 800,000</p>
+            <p>
+              {Number(remainingTokens)} / {maxSupply}
+            </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
                 className="bg-green-600 h-2.5 rounded-full"
@@ -254,14 +327,14 @@ const TokenDetail = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg max-w-md w-full">
+          <div className="bg-[#121212] p-8 rounded-lg max-w-md w-full">
             <h4 className="text-xl font-bold mb-4">Confirm Purchase</h4>
             <p className="mb-4">
               Cost of {purchaseAmount} tokens: {cost} ETH
             </p>
             <div className="flex justify-end space-x-4">
               <button
-                onClick={handlePurchase}
+                onClick={() => handlePurchase()}
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
               >
                 Confirm

@@ -1,0 +1,38 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc = "0.8.24"
+solc_version = "0.8.24"
+remappings = [
+    "@openzeppelin=lib/openzeppelin-contracts",
+    "@uniswap/v2-core=lib/v2-core",
+    "@uniswap/v2-periphery=lib/v2-periphery"
+]
+[rpc_endpoints]
+skale_testnet = "${SKALE_TESTNET_RPC_URL}"
+skale_mainnet = "${SKALE_MAINNET_RPC_URL}"
+polygon_mumbai = "${POLYGON_MUMBAI_RPC_URL}"
+rsk_testnet = "${RSK_TESTNET_RPC_URL}"
+rsk_mainnet = "${RSK_MAINNET_RPC_URL}"
+tenderly_testnet = "${TENDERLY_VIRTUAL_TESTNET_RPC}"
+
+[profile.skale_testnet]
+eth_rpc_url = "${SKALE_TESTNET_RPC_URL}"
+
+[profile.tenderly]
+TENDERLY_ACCESS_KEY="${TENDERLY_ACCESS_KEY}"
+TENDERLY_ETHERSCAN_URL="${TENDERLY_ETHERSCAN_URL}"
+
+
+[profile.skale_mainnet]
+eth_rpc_url = "${SKALE_MAINNET_RPC_URL}"
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+
+# [etherscan]
+# tenderly_testnet = { key = "${TENDERLY_ACCESS_KEY}", url = "${TENDERLY_ETHERSCAN_URL}" }
+
+[etherscan]
+tenderly_testnet = { key = "${TENDERLY_ACCESS_KEY}", chain = 31, url = "${TENDERLY_ETHERSCAN_URL}" }
+rsk_testnet = { key = "${RSK_TESTNET_API_KEY}", url= "${RSK_TESTNET_ETHERSCAN_URL}" }
+

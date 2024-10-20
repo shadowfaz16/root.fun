@@ -1,7 +1,7 @@
   if (body.root === "img") {
 
         // call open ai to return and image for the website inspired by the body.description
-        const openaiApiKey = "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";
+        const openaiApiKey = 
         const imagePrompt = `Create an image for a meme coin website inspired by: ${body.description}`;
 
         try {

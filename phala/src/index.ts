@@ -9,7 +9,7 @@ async function GET(req: Request): Promise<Response> {
     let result = { message: '' }
     const secrets = req.secret || {};
     const queries = req.queries;
-    const anthropicApiKey = "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"
+    const anthropicApiKey = process.env.ANTHROPIC_API_KEY || '';
     const anthropicModel = 'claude-3-5-sonnet-20240620'
     const query = (queries.chatQuery) ? queries.chatQuery[0] as string : 'Who are you?'
     console.log("query", req.path)

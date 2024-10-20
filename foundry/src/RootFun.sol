@@ -35,7 +35,7 @@ contract RootFun {
     uint constant INIT_SUPPLY = 20 * MAX_SUPPLY / 100;
 
     uint256 public constant INITIAL_PRICE = 30000000000000;  // Initial price in wei (P0), 3.00 * 10^13
-    uint256 public constant K = 8 * 10**15;  // Growth rate (k), scaled to avoid precision loss (0.01 * 10^18)
+    uint256 public constant K = 8 * 10**12;  // Growth rate (k), scaled to avoid precision loss (0.01 * 10^18)
 
     event MemeTokenCreated(address indexed memeTokenAddress, string name, string symbol, string description, address creatorAddress, uint256 cost);
     

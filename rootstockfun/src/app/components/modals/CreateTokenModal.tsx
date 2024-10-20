@@ -53,7 +53,7 @@ export default function CreateTokenModal({
   const createToken = () => {
     writeContract({
       abi,
-      address: "0x22d54E0Ae0fB27A754bb74eCA2b65C968d69B0bb",
+      address: "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06",
       functionName: "createMemeToken",
       args: [
         tokenData.name,

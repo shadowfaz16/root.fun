@@ -33,7 +33,7 @@ const TokenDetail = () => {
   const pathname = usePathname();
   const { address } = useAccount();
   //   const factoryAddress = "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4";
-  const factoryAddress = "0x22d54E0Ae0fB27A754bb74eCA2b65C968d69B0bb";
+  const factoryAddress = "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06";
   const [tokenAddress, setTokenAddress] = useState<string | null>(
     pathname.split("/")[2]
   );

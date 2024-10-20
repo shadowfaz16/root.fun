@@ -53,17 +53,16 @@ export default function CreateTokenModal({
   const createToken = () => {
     writeContract({
       abi,
-      address: "0xc899967C168AcCF42d43660079d24E2718aCbbd1",
+      address: "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06",
       functionName: "createMemeToken",
       args: [
         tokenData.name,
         tokenData.symbol,
         tokenData.imageUrl,
         tokenData.description,
-        address,
-        50000000000000000000000,
+        10000,
       ],
-      value: BigInt(1000000),
+      value: BigInt(100000000000000),
     });
   };
 

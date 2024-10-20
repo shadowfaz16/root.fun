@@ -1,5 +1,42 @@
 [
     {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "memeTokenAddress",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "symbol",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "creatorAddress",
+                "type": "address"
+            }
+        ],
+        "name": "MemeTokenCreated",
+        "type": "event"
+    },
+    {
         "inputs": [],
         "name": "INITIAL_PRICE",
         "outputs": [
@@ -145,11 +182,6 @@
                 "type": "string"
             },
             {
-                "internalType": "address[]",
-                "name": "airdropReceiver",
-                "type": "address[]"
-            },
-            {
                 "internalType": "uint256",
                 "name": "airdropQty",
                 "type": "uint256"
@@ -211,6 +243,62 @@
                 "internalType": "struct RootFun.memeToken[]",
                 "name": "",
                 "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "memeTokenAddress",
+                "type": "address"
+            }
+        ],
+        "name": "getMemeToken",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "symbol",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "description",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "tokenImageUrl",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "fundingRaised",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "tokenAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "creatorAddress",
+                        "type": "address"
+                    }
+                ],
+                "internalType": "struct RootFun.memeToken",
+                "name": "",
+                "type": "tuple"
             }
         ],
         "stateMutability": "view",

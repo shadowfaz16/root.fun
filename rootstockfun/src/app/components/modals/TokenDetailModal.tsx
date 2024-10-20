@@ -19,16 +19,35 @@ import { formatEther, parseEther, parseUnits } from "viem";
 import { getBalance } from "@wagmi/core";
 import { config } from "@/config";
 
+interface MemeToken {
+  name: string;
+  tokenImageUrl: string;
+  creatorAddress: string;
+  symbol: string;
+  description: string;
+  fundingRaised: string;
+}
+
 const TokenDetail = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { address } = useAccount();
-//   const factoryAddress = "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4";
-const factoryAddress = "0xc899967C168AcCF42d43660079d24E2718aCbbd1";
+  //   const factoryAddress = "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4";
+  const factoryAddress = "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06";
   const [tokenAddress, setTokenAddress] = useState<string | null>(
     pathname.split("/")[2]
   );
-  const [tokenDetails, setTokenDetails] = useState({
+
+  const { data: getMemeToken } = useReadContract({
+    address: factoryAddress,
+    abi: abi,
+    functionName: "getMemeToken",
+    args: [tokenAddress],
+  });
+
+  console.log("getMemeToken", getMemeToken);
+
+  const [tokenDetails, setTokenDetails] = useState<MemeToken>({
     name: "Unknown",
     symbol: "Unknown",
     description: "No description available",
@@ -194,30 +213,6 @@ const factoryAddress = "0xc899967C168AcCF42d43660079d24E2718aCbbd1";
     }
   };
 
-  const { data: tokenName } = useReadContract({
-    address: tokenAddress as `0x${string}`,
-    abi: tokenAbi,
-    functionName: "name",
-  });
-
-  const { data: tokenSymbol } = useReadContract({
-    address: tokenAddress as `0x${string}`,
-    abi: tokenAbi,
-    functionName: "symbol",
-  });
-
-  const { data: tokenTotalSupply } = useReadContract({
-    address: tokenAddress as `0x${string}`,
-    abi: tokenAbi,
-    functionName: "totalSupply",
-  });
-
-  const { data: contractOwner } = useReadContract({
-    address: tokenAddress as `0x${string}`,
-    abi: tokenAbi,
-    functionName: "owner",
-  });
-
   const balance = getBalance(config, {
     address: address as `0x${string}`,
     token: tokenAddress as `0x${string}`,
@@ -225,10 +220,6 @@ const factoryAddress = "0xc899967C168AcCF42d43660079d24E2718aCbbd1";
 
   console.log("balanceeee", balance);
 
-  console.log("tokenName", tokenName);
-  console.log("tokenSymbol", tokenSymbol);
-  console.log("tokenTotalSupply!!", tokenTotalSupply);
-  console.log("contractOwner", contractOwner);
   console.log("costInWei", costInWei);
   console.log("purchaseAmount", purchaseAmount);
   console.log("remainingTokens", remainingTokens);
@@ -245,18 +236,19 @@ const factoryAddress = "0xc899967C168AcCF42d43660079d24E2718aCbbd1";
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <h2 className="text-2xl font-bold">
-            Token Detail for {tokenName ? tokenName.toString() : "Unknown"}
+            Token Detail for{" "}
+            {getMemeToken ? (getMemeToken as MemeToken).name.toString() : "Unknown"}
           </h2>
           <Image
-            src={coinImage}
-            alt={tokenName ? tokenName.toString() : "Unknown"}
+            src={getMemeToken ? (getMemeToken as MemeToken).tokenImageUrl : coinImage}
+            alt={getMemeToken ? (getMemeToken as MemeToken).tokenImageUrl : "Unknown"}
             width={250}
             height={250}
             className="rounded-lg"
           />
           <p>
             <strong>Creator Address:</strong>{" "}
-            {contractOwner ? contractOwner.toString() : "Unknown"}
+            {getMemeToken ? (getMemeToken as MemeToken).creatorAddress.toString() : "Unknown"}
           </p>
           <p>
             <strong>Token Address:</strong> {tokenAddress}
@@ -266,10 +258,11 @@ const factoryAddress = "0xc899967C168AcCF42d43660079d24E2718aCbbd1";
           </p>
           <p>
             <strong>Token Symbol:</strong>{" "}
-            {tokenSymbol ? tokenSymbol.toString() : "Unknown"}
+            {getMemeToken ? (getMemeToken as MemeToken).symbol.toString() : "Unknown"}
           </p>
           <p>
-            <strong>Description:</strong> {tokenDetails.description}
+            <strong>Description:</strong>{" "}
+            {getMemeToken ? (getMemeToken as MemeToken).description : "Unknown"}
           </p>
         </div>
 

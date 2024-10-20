@@ -1,7 +1,5 @@
 import React from "react";
 import { FaHome, FaChartLine, FaExchangeAlt, FaCog } from "react-icons/fa";
-import Image from "next/image";
-import logo from "@/assets/logo.gif";
 import Link from "next/link";
 
 interface SidebarItem {

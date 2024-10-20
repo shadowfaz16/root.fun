@@ -1,9 +1,4 @@
-export async function generateLink(tokenData: {
-    name: string;
-    symbol: string;
-    imageUrl: string;
-    description: string;
-  }) {
+export async function generateLink() {
     try {
       const options = {
         method: 'POST',
@@ -72,7 +67,7 @@ export async function getHoldersByAddress(tokenAddress: string) {
 
 export async function getTokenHolders(contractAddress: string, page: number = 1, offset: number = 100) {
   try {
-    const baseUrl = 'https://rootstock-testnet.blockscout.com//api';
+    const baseUrl = 'https://rootstock-testnet.blockscout.com/api';
     const params = new URLSearchParams({
       module: 'token',
       action: 'getTokenHolders',
@@ -94,12 +89,12 @@ export async function getTokenHolders(contractAddress: string, page: number = 1,
     // Check if the data has the expected structure
     if (data.status === '1' && Array.isArray(data.result)) {
       // Transform the data into a more usable format
-      const holders = data.result.map((holder: any) => ({
+      const holders: Holder[] = data.result.map((holder: Holder) => ({
         address: holder.address,
         balance: parseFloat(holder.value) / 1e18 // Convert from wei to token units
       }));
       return {
-        success: true,
+        success: true as boolean,
         holders: holders,
         totalCount: holders.length
       };
@@ -113,4 +108,10 @@ export async function getTokenHolders(contractAddress: string, page: number = 1,
       error: error instanceof Error ? error.message : String(error)
     };
   }
+}
+
+interface Holder {
+  address: string;
+  balance: number;
+  value: string;
 }

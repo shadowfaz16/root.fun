@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ethers } from "ethers";
 import abi from "@/factoryabi.json";
 import tokenAbi from "@/tokenabi.json";
 import coinImage from "@/assets/rootstock-coin-2.gif";
@@ -12,10 +11,9 @@ import {
   useWriteContract,
   useAccount,
   useReadContract,
-  useBalance,
 } from "wagmi";
 import { toast } from "sonner";
-import { formatEther, parseEther, parseUnits } from "viem";
+import { formatEther, parseEther } from "viem";
 import { getBalance } from "@wagmi/core";
 import { config } from "@/config";
 import { getTokenHolders } from "@/app/api/walruslinks/route";
@@ -29,15 +27,19 @@ interface MemeToken {
   fundingRaised: string;
 }
 
+interface Holder {
+  address: string;
+  balance: number;
+  value: string;
+}
+
 const TokenDetail = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { address } = useAccount();
   //   const factoryAddress = "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4";
   const factoryAddress = "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06";
-  const [tokenAddress, setTokenAddress] = useState<string | null>(
-    pathname.split("/")[2]
-  );
+  const tokenAddress = pathname.split("/")[2];
 
   const { data: getMemeToken } = useReadContract({
     address: factoryAddress,
@@ -46,17 +48,16 @@ const TokenDetail = () => {
     args: [tokenAddress],
   });
 
+
   console.log("getMemeToken", getMemeToken);
 
-  const [owners, setOwners] = useState([]);
-  const [transfers, setTransfers] = useState([]);
-  const [userBalance, setUserBalance] = useState("0");
+  const [owners, setOwners] = useState<Holder[]>([]);
   const [loading, setLoading] = useState(true);
   const [remainingTokens, setRemainingTokens] = useState("0");
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [cost, setCost] = useState("0");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tokenHolders, setTokenHolders] = useState([]);
+
 
   const { data: totalSupplyy } = useReadContract({
     address: tokenAddress as `0x${string}`,
@@ -64,44 +65,37 @@ const TokenDetail = () => {
     functionName: "totalSupply",
   });
 
-  console.log("totalSupplyy", Number(totalSupplyy) / 10 ** 18);
+  console.log("totalSupplyy", (Number(totalSupplyy) / 10 ** 18));
+
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!tokenAddress) return;
+
       try {
-        const result = await getTokenHolders(tokenAddress as string);
-        if (result.success) {
-          setTokenHolders(result.holders);
-        } else {
-          console.error("Failed to fetch token holders:", result.error);
-        }
+        const ownersData = await getTokenHolders(tokenAddress);
+        setOwners(ownersData.holders || []);
+
+        await fetchTotalSupply();
       } catch (error) {
-        console.error("Error in fetchData:", error);
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchData();
   }, [tokenAddress]);
 
-  console.log("tokenHolders", tokenHolders);
+  console.log("owners", owners);
 
-  //   const fetchTransfers = async () => {
-  //     const response = await fetch(
-  //       `https://deep-index.moralis.io/api/v2.2/erc20/${tokenAddress}/transfers?chain=sepolia&order=DESC`,
-  //       {
-  //         headers: {
-  //           accept: "application/json",
-  //           "X-API-Key": process.env.NEXT_PUBLIC_X_API_KEY || "",
-  //         },
-  //       }
-  //     );
-  //     return response.json();
-  //   };
 
   const fetchTotalSupply = async () => {
     if (!tokenAddress) return;
     if (!totalSupplyy) return;
     if (totalSupplyy) {
-      const totalSupplyFormatted = Number(totalSupplyy) / 10 ** 18 - 200000;
+      const totalSupplyFormatted =
+        (Number(totalSupplyy) / 10 ** 18) - 200000;
       setRemainingTokens((maxSupply - totalSupplyFormatted).toString());
     }
   };
@@ -118,13 +112,14 @@ const TokenDetail = () => {
   const fundingGoal = 0.1;
   const maxSupply = 800000;
 
-  const fundingRaisedPercentage =
+  const fundingRaisedPercentage = (
     (parseFloat(
       getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"
     ) /
       10 ** 18 /
       fundingGoal) *
-    100;
+    100
+  );
   console.log("fundingRaisedPercentage", fundingRaisedPercentage);
   const totalSupplyPercentage =
     ((Number(totalSupplyy) / 10 ** 18 - 200000) / (maxSupply - 200000)) * 100;
@@ -215,47 +210,28 @@ const TokenDetail = () => {
         <div className="space-y-4">
           <h2 className="text-2xl font-bold">
             Token Detail for{" "}
-            {getMemeToken
-              ? (getMemeToken as MemeToken).name.toString()
-              : "Unknown"}
+            {getMemeToken ? (getMemeToken as MemeToken).name.toString() : "Unknown"}
           </h2>
           <Image
-            src={
-              getMemeToken
-                ? (getMemeToken as MemeToken).tokenImageUrl
-                : coinImage
-            }
-            alt={
-              getMemeToken
-                ? (getMemeToken as MemeToken).tokenImageUrl
-                : "Unknown"
-            }
+            src={getMemeToken ? (getMemeToken as MemeToken).tokenImageUrl : coinImage}
+            alt={getMemeToken ? (getMemeToken as MemeToken).tokenImageUrl : "Unknown"}
             width={250}
             height={250}
             className="rounded-lg"
           />
           <p>
             <strong>Creator Address:</strong>{" "}
-            {getMemeToken
-              ? (getMemeToken as MemeToken).creatorAddress.toString()
-              : "Unknown"}
+            {getMemeToken ? (getMemeToken as MemeToken).creatorAddress.toString() : "Unknown"}
           </p>
           <p>
             <strong>Token Address:</strong> {tokenAddress}
           </p>
           <p>
-            <strong>Funding Raised:</strong>{" "}
-            {parseFloat(
-              getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"
-            ) /
-              10 ** 18}{" "}
-            ETH
+            <strong>Funding Raised:</strong> {parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") / 10 ** 18} ETH
           </p>
           <p>
             <strong>Token Symbol:</strong>{" "}
-            {getMemeToken
-              ? (getMemeToken as MemeToken).symbol.toString()
-              : "Unknown"}
+            {getMemeToken ? (getMemeToken as MemeToken).symbol.toString() : "Unknown"}
           </p>
           <p>
             <strong>Description:</strong>{" "}
@@ -267,11 +243,8 @@ const TokenDetail = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">Bonding Curve Progress</h3>
             <p>
-              {parseFloat(
-                getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"
-              ) /
-                10 ** 18}{" "}
-              / {fundingGoal} ETH raised
+              {parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") / 10 ** 18} /{" "}
+              {fundingGoal} ETH raised
             </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
@@ -291,16 +264,12 @@ const TokenDetail = () => {
               Remaining Tokens Available for Sale
             </h3>
             <p>
-              {(
-                maxSupply -
-                (Number(totalSupplyy) / 10 ** 18 - 200000)
-              ).toLocaleString()}{" "}
-              / {maxSupply.toLocaleString()}
+              {maxSupply - (Number(totalSupplyy) / 10 ** 18 - 200000)} / {maxSupply}
             </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
                 className="bg-aqua h-2.5 rounded-full"
-                style={{ width: `${100 - totalSupplyPercentage}%` }}
+                style={{ width: `${totalSupplyPercentage}%` }}
               ></div>
             </div>
           </div>
@@ -351,45 +320,41 @@ const TokenDetail = () => {
 
       <div className="mt-12 space-y-8">
         <section>
-          <h3 className="text-2xl font-bold mb-4">Token Holders</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full table-auto">
-              <thead className="bg-[#252525]">
-                <tr>
-                  <th className="px-4 py-2 text-left">Address</th>
-                  <th className="px-4 py-2 text-left">Balance</th>
-                  <th className="px-4 py-2 text-left">% Distribution</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tokenHolders.map((holder: { address: string, balance: string }, index) => {
-                  const totalSupply = tokenHolders.reduce(
-                    (sum, h: { balance: string }) => sum + Number(h.balance),
-                    0
-                  );
-                  const percentage = (
-                    (Number(holder.balance) / totalSupply) *
-                    100
-                  ).toFixed(2);
-                  return (
-                    <tr
-                      key={index}
-                      className={index % 2 === 0 ? "bg-transparent" : ""}
-                    >
-                      <td className="px-4 py-2">{holder.address}</td>
-                      <td className="px-4 py-2">
-                        {parseFloat(holder.balance).toFixed()} Tokens
-                      </td>
-                      <td className="px-4 py-2">{percentage}%</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <h3 className="text-2xl font-bold mb-4">Owners</h3>
+          {loading ? (
+            <p>Loading owners...</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full table-auto">
+                <thead className="bg-[#252525]">
+                  <tr>
+                    <th className="px-4 py-2 text-left">Owner Address</th>
+                    <th className="px-4 py-2 text-left">Balance</th>
+                    <th className="px-4 py-2 text-left">% Holder Distribution</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {owners.map((owner, index) => {
+                    const totalSupply = 200599.99999999997;
+                    const percentage = (owner.balance / totalSupply) * 100;
+                    return (
+                      <tr
+                        key={index}
+                        className={index % 2 === 0 ? "bg-transparent" : ""}
+                      >
+                        <td className="px-4 py-2">{owner.address}</td>
+                        <td className="px-4 py-2">{owner.balance.toFixed()}</td>
+                        <td className="px-4 py-2">{percentage.toFixed(2)}%</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
 
-        <section>
+        {/* <section>
           <h3 className="text-2xl font-bold mb-4">Transfers</h3>
           {loading ? (
             <p>Loading transfers...</p>
@@ -429,7 +394,7 @@ const TokenDetail = () => {
               </table>
             </div>
           )}
-        </section>
+        </section> */}
       </div>
     </div>
   );

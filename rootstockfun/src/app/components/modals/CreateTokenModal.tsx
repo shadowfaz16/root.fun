@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { useAccount, useWriteContract } from "wagmi";
+import { useWriteContract } from "wagmi";
 import abi from "@/factoryabi.json";
-import { generateLink } from "@/app/api/walruslinks/route";
 import { toast } from "sonner";
-import { getFillerItems } from "@/app/api/walruslinks/route";
 
 interface CreateTokenModalProps {
   isOpen: boolean;
@@ -25,9 +23,8 @@ interface TokenData {
 export default function CreateTokenModal({
   isOpen,
   onClose,
-  onSubmit,
 }: CreateTokenModalProps) {
-  const { address } = useAccount();
+  // const { address } = useAccount();
   const [tokenData, setTokenData] = useState<TokenData>({
     name: "",
     symbol: "",
@@ -40,6 +37,10 @@ export default function CreateTokenModal({
   });
   const [step, setStep] = useState(1);
   const { writeContract, data, isError, error, isPending  } = useWriteContract();
+
+  if (isError) {
+    toast.error(`Error creating token: ${error?.message}`);
+  }
 
   const createToken = async () => {
     const tx = writeContract(
@@ -78,26 +79,21 @@ export default function CreateTokenModal({
     }
   };
 
-  const handleGenerateLink = async () => {
-    try {
-      const linkData = await generateLink({
-        name: tokenData.name,
-        symbol: tokenData.symbol,
-        imageUrl: tokenData.imageUrl!,
-        description: tokenData.description!,
-      });
-      console.log("Generated link data:", linkData);
-      toast.success("Link generated successfully!");
-    } catch (error) {
-      console.error("Error generating link:", error);
-      toast.error("Error generating link!");
-    }
-  };
+  // const handleGenerateLink = async () => {
+  //   try {
+  //     const linkData = await generateLink();
+  //     console.log("Generated link data:", linkData);
+  //     toast.success("Link generated successfully!");
+  //   } catch (error) {
+  //     console.error("Error generating link:", error);
+  //     toast.error("Error generating link!");
+  //   }
+  // };
 
-  const getFillerItemsCall = async () => {
-    const fillerItems = await getFillerItems();
-    console.log("fillerItems: ", fillerItems);
-  };
+  // const getFillerItemsCall = async () => {
+  //   const fillerItems = await getFillerItems();
+  //   console.log("fillerItems: ", fillerItems);
+  // };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

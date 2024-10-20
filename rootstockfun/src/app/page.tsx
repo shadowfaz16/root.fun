@@ -1,12 +1,8 @@
 "use client";
 import { useState } from "react";
-import { GateFiDisplayModeEnum, GateFiSDK } from "@gatefi/js-sdk";
 import CreateTokenModal from "./components/modals/CreateTokenModal";
 import { useAccount, useReadContract, UseReadContractReturnType } from "wagmi";
 import abi from "@/factoryabi.json";
-
-import Image from "next/image";
-import coin from "@/assets/ROOT-FOR-YOUR-COIN-GIF.gif";
 import { FaGlobe, FaTelegramPlane, FaTwitter } from "react-icons/fa";
 import coinGif from "@/assets/rootstock-coin-2.gif";
 import Link from "next/link";
@@ -24,7 +20,6 @@ interface Token {
 
 export default function Homepage() {
   const { address } = useAccount();
-  const [activeTab, setActiveTab] = useState("recent");
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
   const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);
   const result: UseReadContractReturnType<Token[]> = useReadContract({
@@ -37,55 +32,6 @@ export default function Homepage() {
 
   console.log("getAllMemeTokens, ", result.data);
 
-  const recentBuys = [
-    {
-      icon: "🚀",
-      name: "RocketToken",
-      price: "$0.0034",
-      timestamp: "2 mins ago",
-    },
-    { icon: "🌙", name: "MoonCoin", price: "$1.23", timestamp: "5 mins ago" },
-    {
-      icon: "💎",
-      name: "DiamondHands",
-      price: "$0.567",
-      timestamp: "10 mins ago",
-    },
-    { icon: "🦄", name: "UniSwap", price: "$5.67", timestamp: "15 mins ago" },
-  ];
-
-  const hotTokens = [
-    {
-      name: "EthereumMax",
-      icon: "📈",
-      stats: "+234% 24h",
-      kyc: true,
-      progress: 75,
-    },
-    {
-      name: "BitMoon",
-      icon: "🌕",
-      stats: "+120% 24h",
-      kyc: false,
-      progress: 60,
-    },
-    {
-      name: "DogeCoin",
-      icon: "🐕",
-      stats: "+45% 24h",
-      kyc: true,
-      progress: 90,
-    },
-    {
-      name: "SafeMars",
-      icon: "🔴",
-      stats: "+80% 24h",
-      kyc: false,
-      progress: 40,
-    },
-    { name: "BNB", icon: "🟡", stats: "+10% 24h", kyc: true, progress: 95 },
-    { name: "Cardano", icon: "🔷", stats: "+25% 24h", kyc: true, progress: 85 },
-  ];
 
   const LoadingSkeleton = () => (
     <div className="bg-[#252525] rounded-xl shadow-lg p-4 relative animate-pulse">
@@ -107,7 +53,6 @@ export default function Homepage() {
     <div className="flex h-screen bg-[#121212] text-white">
       <div className="flex-1 flex flex-col">
         <main className="flex-1 p-4 md:p-6 overflow-auto">
-          {activeTab === "recent" && (
             <section className="mb-6">
               <h2 className="text-3xl font-bold">New Launches</h2>
               <p className="text-white mb-4">
@@ -220,8 +165,7 @@ export default function Homepage() {
                 )}
               </div>
             </section>
-          )}
-          {activeTab === "hot" && (
+          {/* {activeTab === "hot" && (
             <section>
               <h2 className="text-3xl font-bold mb-6">Hot Tokens</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -257,7 +201,7 @@ export default function Homepage() {
                   ))}
               </div>
             </section>
-          )}
+          )} */}
         </main>
       </div>
       <CreateTokenModal

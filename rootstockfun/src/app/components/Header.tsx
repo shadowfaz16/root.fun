@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
 import CreateTokenModal from "./modals/CreateTokenModal";
 import HowItWorksModal from "./modals/HowItWorks";
 import { GateFiDisplayModeEnum, GateFiSDK } from "@gatefi/js-sdk";

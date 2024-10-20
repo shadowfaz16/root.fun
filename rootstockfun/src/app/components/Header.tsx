@@ -12,8 +12,9 @@ export default function Header() {
   const [activeTab, setActiveTab] = useState("recent");
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
   const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);
-  const [overlayInstance, setOverlayInstance] = useState<GateFiSDK | null>(null);
-
+  const [overlayInstance, setOverlayInstance] = useState<GateFiSDK | null>(
+    null
+  );
 
   useEffect(() => {
     const instance = new GateFiSDK({
@@ -29,13 +30,11 @@ export default function Header() {
     overlayInstance?.show();
   };
 
-
   return (
     <header className="flex justify-between items-center p-6 bg-[#121212]">
       <div className="flex gap-6">
-        <button id="overlay-button" onClick={openOverlay}>Open GateFi</button>
-            <button
-              className={`text-lg ${
+        <button
+          className={`text-lg ${
             activeTab === "recent" ? "text-orange-500" : "text-gray-400"
           } hover:text-orange-400`}
           onClick={() => setActiveTab("recent")}
@@ -52,9 +51,7 @@ export default function Header() {
         </button> */}
         <button
           className={`text-lg ${
-            activeTab === "how-it-works"
-              ? "text-orange-500"
-              : "text-gray-400"
+            activeTab === "how-it-works" ? "text-orange-500" : "text-gray-400"
           } hover:text-orange-400`}
           onClick={() => {
             setIsHowItWorksModalOpen(true);
@@ -80,28 +77,25 @@ export default function Header() {
         >
           Telegram
         </Link>
-        <button onClick={() => setIsCreateTokenModalOpen(true)} className=" text-lg text-verdeFosfo hover:text-verdeFosfo">
+        <button id="overlay-button" className="text-lg text-aqua" onClick={openOverlay}>Get funds</button>
+        <button
+          onClick={() => setIsCreateTokenModalOpen(true)}
+          className=" text-lg text-verdeFosfo hover:text-verdeFosfo"
+        >
           Create Token
         </button>
       </div>
       <DynamicWidget />
-      {
-        isCreateTokenModalOpen && (
-          <CreateTokenModal
-            isOpen={isCreateTokenModalOpen}
-            onClose={() => setIsCreateTokenModalOpen(false)}
-            onSubmit={() => {}}
-          />
-        )
-      }
-      {
-        isHowItWorksModalOpen && (
-          <HowItWorksModal
-            toggleModal={() => setIsHowItWorksModalOpen(false)}
-          />
-        )
-      }
-
+      {isCreateTokenModalOpen && (
+        <CreateTokenModal
+          isOpen={isCreateTokenModalOpen}
+          onClose={() => setIsCreateTokenModalOpen(false)}
+          onSubmit={() => {}}
+        />
+      )}
+      {isHowItWorksModalOpen && (
+        <HowItWorksModal toggleModal={() => setIsHowItWorksModalOpen(false)} />
+      )}
     </header>
   );
 }

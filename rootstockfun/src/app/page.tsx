@@ -8,7 +8,7 @@ import abi from "@/factoryabi.json";
 import Image from "next/image";
 import coin from "@/assets/ROOT-FOR-YOUR-COIN-GIF.gif";
 import { FaGlobe, FaTelegramPlane, FaTwitter } from "react-icons/fa";
-import coinGif from "@/assets/rootstock-coin.gif";
+import coinGif from "@/assets/rootstock-coin-2.gif";
 import Link from "next/link";
 import HowItWorksModal from "./components/modals/HowItWorks";
 
@@ -108,13 +108,13 @@ export default function Homepage() {
       <div className="flex-1 flex flex-col">
         <main className="flex-1 p-6 overflow-auto">
           {activeTab === "recent" && (
-            <section className="mb-8">
+            <section className="mb-6">
               <h2 className="text-3xl font-bold">New Launches</h2>
               <p className="text-white mb-4">
                 Discover the next trending token, {" "}
                 <span className="font-semibold">before everyone else!</span>
               </p>
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-6">
                 <button className="bg-rosa text-black font-bold text-sm hover:bg-rosa transition-all duration-300 px-4 py-2 rounded-md shadow-md hover:shadow-lg"
                   onClick={() => setIsHowItWorksModalOpen(true)}
                 >
@@ -146,13 +146,13 @@ export default function Homepage() {
                           <img
                             src={token.tokenImageUrl}
                             alt="Coin"
-                            className="w-24 h-24 rounded-lg"
+                            className="w-20 h-20 rounded-lg"
                           />
                         ) : (
                           <img
                             src={coinGif.src}
                             alt="Coin"
-                            className="w-24 h-24 rounded-lg"
+                            className="w-20 h-20 rounded-lg"
                           />
                         )}
                         <div className="">

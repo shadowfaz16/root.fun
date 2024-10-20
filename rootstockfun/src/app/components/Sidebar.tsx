@@ -33,12 +33,14 @@ export default function Sidebar() {
             key={index}
             className={`flex items-center gap-4 text-gray-400 text-xl cursor-pointer hover:text-black transition duration-300 rounded-md p-4 w-52 md:bg-transparent ${
               index === 0
-                ? "hover:bg-red-800"
+                ? "hover:bg-morado"
                 : index === 1
-                ? "hover:bg-blue-800"
+                ? "hover:bg-verdeFosfo"
                 : index === 2
-                ? "hover:bg-green-800"
-                : "hover:bg-purple-800"
+                ? "hover:bg-naranja"
+                : index === 3
+                ? "hover:bg-aqua"
+                : "hover:bg-rosa"
             }`}
           >
             <span className="text-2xl">{item.icon}</span>

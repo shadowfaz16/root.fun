@@ -7,6 +7,7 @@ import abi from "@/factoryabi.json";
 
 import Image from "next/image";
 import coin from "@/assets/ROOT-FOR-YOUR-COIN-GIF.gif";
+import { FaGlobe, FaTelegramPlane, FaTwitter } from "react-icons/fa";
 
 interface Token {
   creatorAddress: string;
@@ -30,11 +31,11 @@ export default function Homepage() {
     chainId: 31,
   });
 
-  console.log("isLoading, ", result.isLoading);
-  console.log("getAllMemeTokens, ", result.data);
-  console.log("connected address, ", address);
-  console.log("error, ", result.error);
-  console.log("isSuccess, ", result.isSuccess);
+  // console.log("isLoading, ", result.isLoading);
+  // console.log("getAllMemeTokens, ", result.data);
+  // console.log("connected address, ", address);
+  // console.log("error, ", result.error);
+  // console.log("isSuccess, ", result.isSuccess);
 
   // const overlayInstance = new GateFiSDK({
   //   merchantId: "be07174d-8428-4227-be47-52391c7eafc1",
@@ -95,47 +96,60 @@ export default function Homepage() {
   return (
     <div className="flex h-screen bg-[#121212] text-white">
       <div className="flex-1 flex flex-col">
-        <main className="flex-1 p-8 overflow-auto">
+        <main className="flex-1 p-6 overflow-auto">
           {activeTab === "recent" && (
             <section className="mb-8">
-              <Image src={coin} alt="Coin" width={500} className="w-96" />
-              <h2 className="text-3xl font-bold mb-6">Recent Buys</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <h2 className="text-3xl font-bold">New Launches</h2>
+              <p className="text-white mb-6">
+                Discover the next trending token, {" "}
+                <span className="font-semibold">before everyone else!</span>
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {result.data &&
                 Array.isArray(result.data) &&
                 result.data.length > 0 ? (
                   result.data.map((token: Token, index: number) => (
                     <div
                       key={index}
-                      className="bg-[#252525] rounded-xl shadow-lg hover:shadow-2xl transition duration-300"
+                      className="bg-[#252525] rounded-xl shadow-lg hover:shadow-2xl transition duration-300 p-4 relative"
                     >
-                      <img
-                        src={token.tokenImageUrl}
-                        alt="Coin"
-                        className="w-80"
-                      />
-                      <div className="p-4">
-                      <div className="text-xl font-semibold mb-2">
-                          {token.name}
+                      <div className="flex gap-4 items-center pb-4 border-b border-gray-700 mb-4">
+                        <img
+                          src={token.tokenImageUrl}
+                          alt="Coin"
+                          className="w-24 h-24 rounded-lg"
+                        />
+                        <div className="">
+                          <div className="text-xl font-semibold mb-1">
+                            <span className="text-gray-400 mr-2 uppercase text-lg">
+                              ${token.symbol}
+                            </span>
+                            {token.name}
+                          </div>
+                          <p className="text-gray-400 text-sm">
+                            {token.description}
+                          </p>
                         </div>
-                        <p className="text-gray-400 text-sm">
-                          created by: {token.creatorAddress.slice(0, 4)}...
-                          {token.creatorAddress.slice(-4)}
-                        </p>
-                        <p className="text-gray-400 text-sm mb-2">
-                          funding raised:{" "}
-                          {token.fundingRaised > 0
-                            ? (
-                                Number(token.fundingRaised) /
-                                1000000000000000000
-                              ).toFixed(2)
-                            : "0"}{" "}
-                          RBTC
-                        </p>
-                        <div className="text-lg mb-2">Ticker: ${token.symbol}</div>
-                        <div className="font-semibold mb-2">
-                          {token.description}
-                        </div>
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                      <p className="text-gray-400 text-sm">
+                        created by: {token.creatorAddress.slice(0, 4)}...
+                        {token.creatorAddress.slice(-4)}
+                      </p>
+                      <p className="text-gray-400 text-sm mb-2">
+                        funding raised:{" "}
+                        {token.fundingRaised > 0
+                          ? (
+                              Number(token.fundingRaised) / 1000000000000000000
+                            ).toFixed(2)
+                          : "0"}{" "}
+                        RBTC
+                      </p>
+                      </div>
+                      <div className="absolute top-4 right-4 flex items-center justify-center gap-2">
+                        <FaGlobe />
+                        <FaTwitter />
+                        <FaTelegramPlane />
                       </div>
                     </div>
                   ))
@@ -177,6 +191,7 @@ export default function Homepage() {
                   </div>
                 ))}
               </div>
+              {/* <Image src={coin} alt="Coin" width={500} className="w-96" /> */}
             </section>
           )}
         </main>

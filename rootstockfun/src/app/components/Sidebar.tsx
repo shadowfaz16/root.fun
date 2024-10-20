@@ -17,7 +17,7 @@ const sidebarItems: SidebarItem[] = [
 
 export default function Sidebar() {
   return (
-    <aside className="w-48 bg-[#121212] flex flex-col items-start py-8 px-4 pt-8">
+    <aside className="w-56 bg-[#121212] flex flex-col items-start py-8 px-4 pt-8">
       {/* <Image src={logo} alt="Pump" width={100} height={100} /> */}
       <div className="flex flex-col items-start gap-1">
         <p className="text-black text-3xl font-semibold bg-pink-400 p-1">
@@ -31,7 +31,7 @@ export default function Sidebar() {
         {sidebarItems.map((item, index) => (
           <div
             key={index}
-            className={`flex items-center gap-4 text-gray-400 text-xl cursor-pointer hover:text-yellow-400 transition duration-300 rounded-md p-4 w-48 md:bg-transparent ${
+            className={`flex items-center gap-4 text-gray-400 text-xl cursor-pointer hover:text-black transition duration-300 rounded-md p-4 w-52 md:bg-transparent ${
               index === 0
                 ? "hover:bg-red-800"
                 : index === 1

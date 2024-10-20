@@ -1,48 +1,48 @@
 {
   "../node_modules/@turnkey/api-key-stamper/dist/index.mjs -> ./nodecrypto.mjs": {
-    "id": 8844,
+    "id": "../node_modules/@turnkey/api-key-stamper/dist/index.mjs -> ./nodecrypto.mjs",
     "files": [
-      "static/chunks/844.7a3f75aa0db28ecd.js"
+      "static/chunks/_app-pages-browser_node_modules_turnkey_api-key-stamper_dist_nodecrypto_mjs.js"
     ]
   },
   "../node_modules/@turnkey/api-key-stamper/dist/index.mjs -> ./purejs.mjs": {
-    "id": 26063,
+    "id": "../node_modules/@turnkey/api-key-stamper/dist/index.mjs -> ./purejs.mjs",
     "files": [
-      "static/chunks/63.45ec59bc1ddc6ef5.js"
+      "static/chunks/_app-pages-browser_node_modules_turnkey_api-key-stamper_dist_purejs_mjs.js"
     ]
   },
   "../node_modules/@turnkey/api-key-stamper/dist/index.mjs -> ./webcrypto.mjs": {
-    "id": 48053,
+    "id": "../node_modules/@turnkey/api-key-stamper/dist/index.mjs -> ./webcrypto.mjs",
     "files": [
-      "static/chunks/53.3c4dddea8628d3ca.js"
+      "static/chunks/_app-pages-browser_node_modules_turnkey_api-key-stamper_dist_webcrypto_mjs.js"
     ]
   },
   "../node_modules/@walletconnect/ethereum-provider/dist/index.es.js -> @walletconnect/modal": {
-    "id": 44978,
+    "id": "../node_modules/@walletconnect/ethereum-provider/dist/index.es.js -> @walletconnect/modal",
     "files": [
-      "static/chunks/978.d36d580f6c38aa64.js"
+      "static/chunks/_app-pages-browser_node_modules_walletconnect_modal_dist_index_js.js"
     ]
   },
   "../node_modules/@walletconnect/modal/dist/index.js -> @walletconnect/modal-ui": {
-    "id": 46275,
+    "id": "../node_modules/@walletconnect/modal/dist/index.js -> @walletconnect/modal-ui",
     "files": [
-      "static/chunks/275.b55fc821414f4ab1.js"
+      "static/chunks/_app-pages-browser_node_modules_walletconnect_modal-ui_dist_index_js.js"
     ]
   },
   "../node_modules/viem/_esm/actions/public/call.js -> ../../utils/ccip.js": {
-    "id": 71735,
+    "id": "../node_modules/viem/_esm/actions/public/call.js -> ../../utils/ccip.js",
     "files": [
-      "static/chunks/735.589a66b56c71520c.js"
+      "static/chunks/_app-pages-browser_node_modules_viem__esm_utils_ccip_js.js"
     ]
   },
   "../node_modules/viem/_esm/utils/rpc/webSocket.js -> isows": {
-    "id": null,
+    "id": "../node_modules/viem/_esm/utils/rpc/webSocket.js -> isows",
     "files": []
   },
   "../node_modules/viem/_esm/utils/signature/recoverPublicKey.js -> @noble/curves/secp256k1": {
-    "id": 10846,
+    "id": "../node_modules/viem/_esm/utils/signature/recoverPublicKey.js -> @noble/curves/secp256k1",
     "files": [
-      "static/chunks/846-244d3baadc6bf568.js"
+      "static/chunks/_app-pages-browser_node_modules_viem_node_modules_noble_curves_esm_secp256k1_js.js"
     ]
   }
 }

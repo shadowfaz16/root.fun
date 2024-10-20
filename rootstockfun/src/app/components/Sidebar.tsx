@@ -18,12 +18,15 @@ export default function Sidebar() {
   return (
     <aside className="w-56 bg-[#121212] flex flex-col items-start py-8 px-4 pt-8">
       {/* <Image src={logo} alt="Pump" width={100} height={100} /> */}
-      <div className="flex flex-col items-start gap-1">
+      <div className="flex flex-col items-start gap-1 relative">
         <p className="text-black text-3xl font-semibold bg-rosa p-1">
           Pump
         </p>
         <p className="text-black text-3xl font-semibold bg-naranja p-1">
           Together
+        </p>
+        <p className="absolute top-0 -right-2 text-xs text-white bg-black border border-white rounded-full px-3 py-1 transform rotate-[20deg]">
+          on Bitcoin
         </p>
       </div>
       <nav className="flex flex-col gap-4 mt-12">

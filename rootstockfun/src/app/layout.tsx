@@ -21,7 +21,7 @@ const evmNetworks = [
       symbol: "RBTC",
     },
     networkId: 31,
-    rpcUrls: ["https://31.rpc.thirdweb.com/${THIRDWEB_API_KEY}"],
+    rpcUrls: ["https://explorer.testnet.rsk.co"],
     vanityName: "Rootstock Testnet",
   },
 ];

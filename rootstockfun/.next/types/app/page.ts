@@ -1,4 +1,4 @@
-// File: /Users/juan/Code/hackathons/24-sf/root.fun/rootstockfun/src/app/page.tsx
+// File: /Users/shadow/Desktop/shadow/hackathons/ethsf2k24/rootfun/rootfundev/rootstockfun/src/app/page.tsx
 import * as entry from '../../../src/app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

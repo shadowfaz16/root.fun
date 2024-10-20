@@ -148,6 +148,10 @@ const TokenDetail = () => {
     },
   });
 
+  if (isLoading) {
+    toast.info("Loading purchase...");
+  }
+
   const handlePurchase = () => {
     if (!tokenAddress || !address) {
       toast.error("Please connect your wallet first.");

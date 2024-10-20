@@ -8,6 +8,7 @@ import abi from "@/factoryabi.json";
 import Image from "next/image";
 import coin from "@/assets/ROOT-FOR-YOUR-COIN-GIF.gif";
 import { FaGlobe, FaTelegramPlane, FaTwitter } from "react-icons/fa";
+import coinGif from "@/assets/rootstock-coin.gif";
 
 interface Token {
   creatorAddress: string;
@@ -32,7 +33,7 @@ export default function Homepage() {
   });
 
   // console.log("isLoading, ", result.isLoading);
-  // console.log("getAllMemeTokens, ", result.data);
+  console.log("getAllMemeTokens, ", result.data);
   // console.log("connected address, ", address);
   // console.log("error, ", result.error);
   // console.log("isSuccess, ", result.isSuccess);
@@ -115,7 +116,11 @@ export default function Homepage() {
                     >
                       <div className="flex gap-4 items-center pb-4 border-b border-gray-700 mb-4">
                         <img
-                          src={token.tokenImageUrl}
+                          src={
+                            token.tokenImageUrl && token.tokenImageUrl !== "" && !token.tokenImageUrl.includes("ipfs://") && !token.tokenImageUrl.includes("google")
+                              ? token.tokenImageUrl
+                              : coinGif.src
+                          }
                           alt="Coin"
                           className="w-24 h-24 rounded-lg"
                         />

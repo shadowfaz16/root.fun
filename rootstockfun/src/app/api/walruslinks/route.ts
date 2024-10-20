@@ -98,7 +98,7 @@ export async function GET(request: Request) {
       console.log("Token holders data:", data);
   
       if (data.status === '1' && Array.isArray(data.result)) {
-        const holders = data.result.map((holder: any) => ({
+        const holders = data.result.map((holder: Holder) => ({
           address: holder.address,
           balance: parseFloat(holder.value) / 1e18
         }));

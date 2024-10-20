@@ -43,3 +43,29 @@ export async function getFillerItems() {
     throw error;
   }
 }
+
+export async function getHoldersByAddress(tokenAddress: string) {
+  try {
+    const baseUrl = 'https://instance_base_url/api';
+    const params = new URLSearchParams({
+      module: 'token',
+      action: 'getTokenHolders',
+      contractaddress: tokenAddress,
+      page: '1',
+      offset: '100'
+    });
+
+    const url = `${baseUrl}?${params.toString()}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching token holders:', error);
+    throw error;
+  }
+}

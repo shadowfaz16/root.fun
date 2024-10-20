@@ -8,50 +8,76 @@ import abi from "@/factoryabi.json";
 import tokenAbi from "@/tokenabi.json";
 import coinImage from "@/assets/rootstock-coin-2.gif";
 import { usePathname } from "next/navigation";
-import { useWriteContract, useAccount, useReadContract } from "wagmi";
+import {
+  useWriteContract,
+  useAccount,
+  useReadContract,
+  useBalance,
+} from "wagmi";
 import { toast } from "sonner";
+import { formatEther, parseEther, parseUnits } from "viem";
+import { getBalance } from "@wagmi/core";
+import { config } from "@/config";
+
+interface MemeToken {
+  name: string;
+  tokenImageUrl: string;
+  creatorAddress: string;
+  symbol: string;
+  description: string;
+  fundingRaised: string;
+}
 
 const TokenDetail = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { address } = useAccount();
+  //   const factoryAddress = "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4";
+  const factoryAddress = "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06";
   const [tokenAddress, setTokenAddress] = useState<string | null>(
     pathname.split("/")[2]
   );
-  const [tokenDetails, setTokenDetails] = useState({
-    name: "Unknown",
-    symbol: "Unknown",
-    description: "No description available",
-    tokenImageUrl: "https://via.placeholder.com/200",
-    fundingRaised: "0 ETH",
-    creatorAddress: "0x0000000000000000000000000000000000000000",
+
+  const { data: getMemeToken } = useReadContract({
+    address: factoryAddress,
+    abi: abi,
+    functionName: "getMemeToken",
+    args: [tokenAddress],
   });
+
+
+  console.log("getMemeToken", getMemeToken);
 
   const [owners, setOwners] = useState([]);
   const [transfers, setTransfers] = useState([]);
+  const [userBalance, setUserBalance] = useState("0");
   const [loading, setLoading] = useState(true);
-  const [totalSupply, setTotalSupply] = useState("0");
   const [remainingTokens, setRemainingTokens] = useState("0");
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [cost, setCost] = useState("0");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fundingRaised = parseFloat(
-    tokenDetails.fundingRaised.replace(" ETH", "")
-  );
+  const { data: totalSupplyy } = useReadContract({
+    address: tokenAddress as `0x${string}`,
+    abi: tokenAbi,
+    functionName: "totalSupply",
+  });
+
+  console.log("totalSupplyy", (Number(totalSupplyy) / 10 ** 18));
+
 
   useEffect(() => {
     const fetchData = async () => {
       if (!tokenAddress) return;
 
       try {
-        const [ownersData, transfersData] = await Promise.all([
-          fetchOwners(),
-          fetchTransfers(),
-        ]);
+        // const [ownersData, transfersData] = await Promise.all([
+        //   fetchOwners(),
+        //   fetchTransfers(),
+        // ]);
 
-        setOwners(ownersData.result || []);
-        setTransfers(transfersData.result || []);
+        // setOwners(ownersData.result || []);
+        // setTransfers(transfersData.result || []);
 
         await fetchTotalSupply();
       } catch (error) {
@@ -77,54 +103,58 @@ const TokenDetail = () => {
     return response.json();
   };
 
-  const fetchTransfers = async () => {
-    const response = await fetch(
-      `https://deep-index.moralis.io/api/v2.2/erc20/${tokenAddress}/transfers?chain=sepolia&order=DESC`,
-      {
-        headers: {
-          accept: "application/json",
-          "X-API-Key": process.env.NEXT_PUBLIC_X_API_KEY || "",
-        },
-      }
-    );
-    return response.json();
-  };
+  //   const fetchTransfers = async () => {
+  //     const response = await fetch(
+  //       `https://deep-index.moralis.io/api/v2.2/erc20/${tokenAddress}/transfers?chain=sepolia&order=DESC`,
+  //       {
+  //         headers: {
+  //           accept: "application/json",
+  //           "X-API-Key": process.env.NEXT_PUBLIC_X_API_KEY || "",
+  //         },
+  //       }
+  //     );
+  //     return response.json();
+  //   };
 
   const fetchTotalSupply = async () => {
     if (!tokenAddress) return;
-    
-    const { data: totalSupplyResponse } = useReadContract({
-      address: tokenAddress as `0x${string}`,
-      abi: tokenAbi,
-      functionName: 'totalSupply',
-    });
-
-    if (totalSupplyResponse) {
+    if (!totalSupplyy) return;
+    if (totalSupplyy) {
       const totalSupplyFormatted =
-        parseInt(ethers.formatUnits(totalSupplyResponse as bigint, "ether")) - 200000;
-      setTotalSupply(totalSupplyFormatted.toString());
+        (Number(totalSupplyy) / 10 ** 18) - 200000;
       setRemainingTokens((maxSupply - totalSupplyFormatted).toString());
     }
   };
 
+  const { data: costInWei } = useReadContract({
+    address: factoryAddress,
+    abi: abi,
+    functionName: "calculateCost",
+    args: [remainingTokens, purchaseAmount],
+  });
+
+  console.log("costInWei", costInWei);
+
   const fundingGoal = 0.1;
   const maxSupply = 800000;
 
-  const fundingRaisedPercentage = (fundingRaised / fundingGoal) * 100;
+  const fundingRaisedPercentage = (
+    (parseFloat(
+      getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"
+    ) /
+      10 ** 18 /
+      fundingGoal) *
+    100
+  );
+  console.log("fundingRaisedPercentage", fundingRaisedPercentage);
   const totalSupplyPercentage =
-    ((parseFloat(totalSupply) - 200000) / (maxSupply - 200000)) * 100;
-
+    ((Number(totalSupplyy) / 10 ** 18 - 200000) / (maxSupply - 200000)) * 100;
   const getCost = async () => {
     if (!purchaseAmount || !tokenAddress) return;
 
     try {
-      const { data: costInWei } = await useReadContract({
-        address: tokenAddress as `0x${string}`,
-        abi: tokenAbi,
-        functionName: 'calculateCost',
-        args: [remainingTokens, purchaseAmount],
-      });
-      setCost(ethers.formatUnits(costInWei as bigint, "ether"));
+      setCost(formatEther(costInWei as bigint));
+      setIsModalOpen(true); // Open the confirmation modal after getting the cost
     } catch (error) {
       console.error("Error calculating cost:", error);
       toast.error("Error calculating cost. Please try again.");
@@ -135,6 +165,7 @@ const TokenDetail = () => {
     mutation: {
       onError: (error) => {
         toast.error(`Error during purchase: ${error.message}`);
+        console.log("error!!!", error);
       },
       onSuccess: () => {
         toast.success("Purchase successful!");
@@ -143,25 +174,54 @@ const TokenDetail = () => {
     },
   });
 
-  const handlePurchase = async () => {
+  const handlePurchase = () => {
     if (!tokenAddress || !address) {
       toast.error("Please connect your wallet first.");
+      console.log("no address");
+      return;
+    }
+    if (!cost) {
+      toast.error("Please calculate the cost first.");
+      console.log("no cost");
+      return;
+    }
+    if (!purchaseAmount) {
+      toast.error("Please enter the amount of tokens to buy.");
+      console.log("no purchase amount");
       return;
     }
 
     try {
-      writeContract({
-        abi: tokenAbi,
-        address: tokenAddress as `0x${string}`,
+      toast.info("Sending purchase transaction...");
+      console.log("cost final", costInWei);
+      console.log("purchaseAmount", parseEther(purchaseAmount));
+      const tx = writeContract({
+        abi: abi,
+        address: factoryAddress,
         functionName: "buyMemeToken",
-        args: [purchaseAmount],
-        value: ethers.parseEther(cost),
+        args: [tokenAddress, purchaseAmount],
+        value: parseEther(cost),
       });
+      // Remove duplicate success messages
+      toast.success("Purchase transaction sent!");
+      // fetchTotalSupply is already called in the onSuccess callback
+      console.log("tx", tx);
     } catch (error) {
       console.error("Error during purchase:", error);
       toast.error("Error during purchase. Please try again.");
     }
   };
+
+  const balance = getBalance(config, {
+    address: address as `0x${string}`,
+    token: tokenAddress as `0x${string}`,
+  });
+
+  console.log("balanceeee", balance);
+
+  console.log("costInWei", costInWei);
+  console.log("purchaseAmount", purchaseAmount);
+  console.log("remainingTokens", remainingTokens);
 
   return (
     <div className="container mx-auto p-6 bg-[#121212]">
@@ -175,29 +235,33 @@ const TokenDetail = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <h2 className="text-2xl font-bold">
-            Token Detail for {tokenDetails.name}
+            Token Detail for{" "}
+            {getMemeToken ? (getMemeToken as MemeToken).name.toString() : "Unknown"}
           </h2>
           <Image
-            src={coinImage}
-            alt={tokenDetails.name}
+            src={getMemeToken ? (getMemeToken as MemeToken).tokenImageUrl : coinImage}
+            alt={getMemeToken ? (getMemeToken as MemeToken).tokenImageUrl : "Unknown"}
             width={250}
             height={250}
             className="rounded-lg"
           />
           <p>
-            <strong>Creator Address:</strong> {tokenDetails.creatorAddress}
+            <strong>Creator Address:</strong>{" "}
+            {getMemeToken ? (getMemeToken as MemeToken).creatorAddress.toString() : "Unknown"}
           </p>
           <p>
             <strong>Token Address:</strong> {tokenAddress}
           </p>
           <p>
-            <strong>Funding Raised:</strong> {tokenDetails.fundingRaised}
+            <strong>Funding Raised:</strong> {parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") / 10 ** 18} ETH
           </p>
           <p>
-            <strong>Token Symbol:</strong> {tokenDetails.symbol}
+            <strong>Token Symbol:</strong>{" "}
+            {getMemeToken ? (getMemeToken as MemeToken).symbol.toString() : "Unknown"}
           </p>
           <p>
-            <strong>Description:</strong> {tokenDetails.description}
+            <strong>Description:</strong>{" "}
+            {getMemeToken ? (getMemeToken as MemeToken).description : "Unknown"}
           </p>
         </div>
 
@@ -205,11 +269,12 @@ const TokenDetail = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">Bonding Curve Progress</h3>
             <p>
-              {fundingRaised} / {fundingGoal} RBTC
+              {parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") / 10 ** 18} /{" "}
+              {fundingGoal} ETH raised
             </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
-                className="bg-blue-600 h-2.5 rounded-full"
+                className="bg-naranja h-2.5 rounded-full"
                 style={{ width: `${fundingRaisedPercentage}%` }}
               ></div>
             </div>
@@ -224,10 +289,12 @@ const TokenDetail = () => {
             <h3 className="text-xl font-semibold">
               Remaining Tokens Available for Sale
             </h3>
-            <p>{remainingTokens} / 800,000</p>
+            <p>
+              {maxSupply - (Number(totalSupplyy) / 10 ** 18 - 200000)} / {maxSupply}
+            </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
-                className="bg-green-600 h-2.5 rounded-full"
+                className="bg-aqua h-2.5 rounded-full"
                 style={{ width: `${totalSupplyPercentage}%` }}
               ></div>
             </div>
@@ -244,7 +311,7 @@ const TokenDetail = () => {
             />
             <button
               onClick={getCost}
-              className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+              className="w-full bg-verdeFosfo text-black font-semibold px-4 py-2 rounded hover:bg-blue-600 transition"
             >
               Purchase
             </button>
@@ -254,14 +321,14 @@ const TokenDetail = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg max-w-md w-full">
+          <div className="bg-[#121212] p-8 rounded-lg max-w-md w-full">
             <h4 className="text-xl font-bold mb-4">Confirm Purchase</h4>
             <p className="mb-4">
               Cost of {purchaseAmount} tokens: {cost} ETH
             </p>
             <div className="flex justify-end space-x-4">
               <button
-                onClick={handlePurchase}
+                onClick={() => handlePurchase()}
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
               >
                 Confirm

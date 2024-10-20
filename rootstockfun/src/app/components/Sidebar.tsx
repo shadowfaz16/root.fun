@@ -2,6 +2,7 @@ import React from "react";
 import { FaHome, FaChartLine, FaExchangeAlt, FaCog } from "react-icons/fa";
 import Image from "next/image";
 import logo from "@/assets/logo.gif";
+import Link from "next/link";
 
 interface SidebarItem {
   icon: React.ReactNode;
@@ -29,8 +30,9 @@ export default function Sidebar() {
       </div>
       <nav className="flex flex-col gap-4 mt-12">
         {sidebarItems.map((item, index) => (
-          <div
+          <Link
             key={index}
+            href={item.name === "Home" ? "/" : item.name === "Stats" ? "/stats" : item.name === "Exchange" ? "/exchange" : "/settings"}
             className={`flex items-center gap-4 text-gray-400 text-xl cursor-pointer hover:text-black transition duration-300 rounded-md p-4 w-52 md:bg-transparent ${
               index === 0
                 ? "hover:bg-morado"
@@ -45,7 +47,7 @@ export default function Sidebar() {
           >
             <span className="text-2xl">{item.icon}</span>
             <span className="hidden md:inline text-sm">{item.name}</span>
-          </div>
+          </Link>
         ))}
       </nav>
     </aside>

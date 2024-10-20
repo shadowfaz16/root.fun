@@ -32,7 +32,7 @@ export default function Header() {
 
   return (
     <header className="flex justify-between items-center p-6 bg-[#121212]">
-      <div className="flex gap-6">
+      <div className="flex gap-6 items-center">
         <button
           className={`text-lg ${
             activeTab === "recent" ? "text-orange-500" : "text-gray-400"

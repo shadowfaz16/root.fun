@@ -96,7 +96,9 @@ export default function HowItWorksModal({
             </div>
 
             <div className="flex flex-col space-y-4 mt-6">
-              <button className="bg-gradient-to-r from-verde to-aqua text-black px-6 py-3 rounded-full font-bold text-lg hover:from-verde hover:to-aqua transition-all duration-300 shadow-lg">
+              <button className="bg-gradient-to-r from-verde to-aqua text-black px-6 py-3 rounded-full font-bold text-lg hover:from-verde hover:to-aqua transition-all duration-300 shadow-lg"
+                onClick={() => toggleModal()}
+              >
                 Explore Root Fun
               </button>
               <button className="bg-gradient-to-r from-verdeFosfo to-naranja text-black px-6 py-3 rounded-full font-bold text-lg hover:from-verdeFosfo hover:to-naranja transition-all duration-300 shadow-lg">

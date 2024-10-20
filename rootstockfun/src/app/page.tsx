@@ -120,7 +120,7 @@ export default function Homepage() {
                 ) : result.data &&
                   Array.isArray(result.data) &&
                   result.data.length > 0 ? (
-                  result.data.map((token: Token, index: number) => (
+                  [...result.data].reverse().map((token: Token, index: number) => (
                     <div
                       key={index}
                       className="bg-[#252525] rounded-xl shadow-lg hover:shadow-2xl transition duration-300 p-4 relative"
@@ -179,7 +179,7 @@ export default function Homepage() {
             <section>
               <h2 className="text-3xl font-bold mb-6">Hot Tokens</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {hotTokens.map((token, index) => (
+                {hotTokens.slice().reverse().map((token, index) => (
                   <div
                     key={index}
                     className="bg-[#252525] p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300"

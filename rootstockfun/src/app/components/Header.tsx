@@ -1,21 +1,39 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import CreateTokenModal from "./modals/CreateTokenModal";
 import HowItWorksModal from "./modals/HowItWorks";
+import { GateFiDisplayModeEnum, GateFiSDK } from "@gatefi/js-sdk";
 
 export default function Header() {
   const { address } = useAccount();
   const [activeTab, setActiveTab] = useState("recent");
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
   const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);
+  const [overlayInstance, setOverlayInstance] = useState<GateFiSDK | null>(null);
+
+
+  useEffect(() => {
+    const instance = new GateFiSDK({
+      merchantId: "be07174d-8428-4227-be47-52391c7eafc1",
+      displayMode: "overlay" as GateFiDisplayModeEnum,
+      nodeSelector: "#overlay-button",
+      walletAddress: address,
+    });
+    setOverlayInstance(instance);
+    instance.hide(); // Uncomment if you need to initially hide the overlay
+  }, [address]);
+  const openOverlay = () => {
+    overlayInstance?.show();
+  };
+
 
   return (
     <header className="flex justify-between items-center p-6 bg-[#121212]">
       <div className="flex gap-6">
-        {/* <button id="overlay-button">Open GateFi</button> */}
+        <button id="overlay-button" onClick={openOverlay}>Open GateFi</button>
             <button
               className={`text-lg ${
             activeTab === "recent" ? "text-orange-500" : "text-gray-400"

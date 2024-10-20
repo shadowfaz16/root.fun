@@ -32,17 +32,7 @@ export default function Homepage() {
     chainId: 31,
   });
 
-  // console.log("isLoading, ", result.isLoading);
   console.log("getAllMemeTokens, ", result.data);
-  // console.log("connected address, ", address);
-  // console.log("error, ", result.error);
-  // console.log("isSuccess, ", result.isSuccess);
-
-  // const overlayInstance = new GateFiSDK({
-  //   merchantId: "be07174d-8428-4227-be47-52391c7eafc1",
-  //   displayMode: "overlay" as GateFiDisplayModeEnum,
-  //   nodeSelector: "#overlay-button"
-  // })
 
   const recentBuys = [
     {
@@ -94,6 +84,22 @@ export default function Homepage() {
     { name: "Cardano", icon: "🔷", stats: "+25% 24h", kyc: true, progress: 85 },
   ];
 
+  const LoadingSkeleton = () => (
+    <div className="bg-[#252525] rounded-xl shadow-lg p-4 relative animate-pulse">
+      <div className="flex gap-4 items-center pb-4 border-b border-gray-700 mb-4">
+        <div className="w-24 h-24 bg-gray-700 rounded-lg"></div>
+        <div className="flex-1">
+          <div className="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+        </div>
+      </div>
+      <div className="flex items-center justify-between gap-2">
+        <div className="h-4 bg-gray-700 rounded w-1/3"></div>
+        <div className="h-4 bg-gray-700 rounded w-1/4"></div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex h-screen bg-[#121212] text-white">
       <div className="flex-1 flex flex-col">
@@ -106,9 +112,14 @@ export default function Homepage() {
                 <span className="font-semibold">before everyone else!</span>
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {result.data &&
-                Array.isArray(result.data) &&
-                result.data.length > 0 ? (
+                {result.isLoading ? (
+                  // Display loading skeletons while data is loading
+                  Array(4).fill(0).map((_, index) => (
+                    <LoadingSkeleton key={index} />
+                  ))
+                ) : result.data &&
+                  Array.isArray(result.data) &&
+                  result.data.length > 0 ? (
                   result.data.map((token: Token, index: number) => (
                     <div
                       key={index}
@@ -196,7 +207,6 @@ export default function Homepage() {
                   </div>
                 ))}
               </div>
-              {/* <Image src={coin} alt="Coin" width={500} className="w-96" /> */}
             </section>
           )}
         </main>

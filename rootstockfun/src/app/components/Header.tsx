@@ -4,11 +4,13 @@ import { useState } from "react";
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import CreateTokenModal from "./modals/CreateTokenModal";
+import HowItWorksModal from "./modals/HowItWorks";
 
 export default function Header() {
   const { address } = useAccount();
   const [activeTab, setActiveTab] = useState("recent");
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
+  const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);
 
   return (
     <header className="flex justify-between items-center p-6 bg-[#121212]">
@@ -36,7 +38,9 @@ export default function Header() {
               ? "text-orange-500"
               : "text-gray-400"
           } hover:text-orange-400`}
-          onClick={() => setActiveTab("how-it-works")}
+          onClick={() => {
+            setIsHowItWorksModalOpen(true);
+          }}
         >
           How it works
         </button>
@@ -69,6 +73,13 @@ export default function Header() {
             isOpen={isCreateTokenModalOpen}
             onClose={() => setIsCreateTokenModalOpen(false)}
             onSubmit={() => {}}
+          />
+        )
+      }
+      {
+        isHowItWorksModalOpen && (
+          <HowItWorksModal
+            toggleModal={() => setIsHowItWorksModalOpen(false)}
           />
         )
       }

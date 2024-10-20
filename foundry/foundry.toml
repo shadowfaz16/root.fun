@@ -4,7 +4,7 @@ out = "out"
 libs = ["lib"]
 solc = "0.8.24"
 solc_version = "0.8.24"
-
+remappings = ["@openzeppelin=lib/openzeppelin-contracts"]
 [rpc_endpoints]
 skale_testnet = "${SKALE_TESTNET_RPC_URL}"
 skale_mainnet = "${SKALE_MAINNET_RPC_URL}"

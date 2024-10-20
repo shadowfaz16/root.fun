@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useWriteContract } from "wagmi";
 import abi from "@/factoryabi.json";
+import { generateLink } from "@/app/api/walruslinks/route";
+import { toast } from "sonner";
 
 interface CreateTokenModalProps {
   isOpen: boolean;
@@ -52,6 +54,25 @@ export default function CreateTokenModal({
     });
   };
 
+
+  const handleGenerateLink = async () => {
+    try {
+      const linkData = await generateLink({
+        name: tokenData.name,
+        symbol: tokenData.symbol,
+        imageUrl: tokenData.imageUrl!,
+        description: tokenData.description!,
+      });
+      console.log("Generated link data:", linkData);
+      // You can add further logic here, such as displaying the generated link to the user
+      toast.success("Link generated successfully!");
+    } catch (error) {
+      console.error("Error generating link:", error);
+      // You can add error handling logic here, such as displaying an error message to the user
+      toast.error("Error generating link!");
+    }
+  };
+
   console.log("data: ", data);
   console.log("isError: ", isError);
   console.log("error: ", error);
@@ -67,6 +88,8 @@ export default function CreateTokenModal({
     e.preventDefault();
     createToken();
   };
+
+  console.log("tokenData: ", tokenData);
 
   if (!isOpen) return null;
 
@@ -226,6 +249,13 @@ export default function CreateTokenModal({
               onClick={createToken}
             >
               Create Token
+            </button>
+            <button
+              type="button"
+              className="inline-flex justify-center rounded-md border border-transparent bg-orange-500 px-6 py-3 text-sm font-medium text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              onClick={handleGenerateLink}
+            >
+              Generate Link
             </button>
           </div>
         </form>

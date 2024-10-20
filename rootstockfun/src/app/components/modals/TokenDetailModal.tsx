@@ -129,7 +129,7 @@ const TokenDetail = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 bg-[#121212]">
 
       <button 
         onClick={() => router.push('/')} 

@@ -9,6 +9,7 @@ import Image from "next/image";
 import coin from "@/assets/ROOT-FOR-YOUR-COIN-GIF.gif";
 import { FaGlobe, FaTelegramPlane, FaTwitter } from "react-icons/fa";
 import coinGif from "@/assets/rootstock-coin.gif";
+import Link from "next/link";
 
 interface Token {
   creatorAddress: string;
@@ -121,7 +122,8 @@ export default function Homepage() {
                   Array.isArray(result.data) &&
                   result.data.length > 0 ? (
                   [...result.data].reverse().map((token: Token, index: number) => (
-                    <div
+                    <Link
+                      href={`/token/${token.tokenAddress}`}
                       key={index}
                       className="bg-[#252525] rounded-xl shadow-lg hover:shadow-2xl transition duration-300 p-4 relative"
                     >
@@ -167,7 +169,7 @@ export default function Homepage() {
                         <FaTwitter />
                         <FaTelegramPlane />
                       </div>
-                    </div>
+                    </Link>
                   ))
                 ) : (
                   <div>No tokens found</div>

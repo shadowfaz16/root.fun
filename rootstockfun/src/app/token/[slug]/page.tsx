@@ -1,5 +1,5 @@
 import React from 'react'
-import TokenDetailModal from '../components/modals/TokenDetailModal'
+import TokenDetailModal from '../../components/modals/TokenDetailModal'
 
 const TokenPage = () => {
   return (

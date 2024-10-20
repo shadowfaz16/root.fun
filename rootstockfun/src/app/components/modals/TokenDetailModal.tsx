@@ -33,7 +33,7 @@ const TokenDetail = () => {
   const pathname = usePathname();
   const { address } = useAccount();
   //   const factoryAddress = "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4";
-  const factoryAddress = "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06";
+  const factoryAddress = "0x22d54E0Ae0fB27A754bb74eCA2b65C968d69B0bb";
   const [tokenAddress, setTokenAddress] = useState<string | null>(
     pathname.split("/")[2]
   );
@@ -66,11 +66,6 @@ const TokenDetail = () => {
   const [cost, setCost] = useState("0");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fundingRaised = parseFloat(
-    tokenDetails.fundingRaised.replace(" ETH", "")
-  );
-
-  console.log("fundingRaised", fundingRaised);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -145,7 +140,11 @@ const TokenDetail = () => {
   const fundingGoal = 0.1;
   const maxSupply = 800000;
 
-  const fundingRaisedPercentage = (fundingRaised / fundingGoal) * 100;
+  const fundingRaisedPercentage = (
+    (parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") /
+      fundingGoal) *
+    100
+  );
   console.log("fundingRaisedPercentage", fundingRaisedPercentage);
   const totalSupplyPercentage =
     ((parseFloat(totalSupply) - 200000) / (maxSupply - 200000)) * 100;
@@ -270,7 +269,8 @@ const TokenDetail = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">Bonding Curve Progress</h3>
             <p>
-              {fundingRaised} / {fundingGoal} RBTC
+              {getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"} /{" "}
+              {fundingGoal} ETH
             </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div

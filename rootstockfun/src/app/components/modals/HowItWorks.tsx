@@ -9,10 +9,10 @@ export default function HowItWorksModal({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 p-4">
       <div className="bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] text-white rounded-xl w-full max-w-4xl p-8 shadow-2xl overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 via-yellow-400 to-orange-500"></div>
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-verde via-verdeFosfo to-naranja"></div>
         
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
+          <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-verde to-aqua">
             Root Fun: Revolutionizing Token Launches
           </h2>
           <button
@@ -28,51 +28,51 @@ export default function HowItWorksModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <div className="bg-[#252525] rounded-lg p-6 shadow-inner">
-              <h3 className="text-2xl font-bold text-yellow-400 mb-4 flex items-center">
+              <h3 className="text-2xl font-bold text-verdeFosfo mb-4 flex items-center">
                 <FaRocket className="mr-2" /> Fair Launch
               </h3>
               <ul className="space-y-3">
                 <li className="flex items-center">
-                  <span className="text-green-400 mr-2">✔</span>
+                  <span className="text-verde mr-2">✔</span>
                   No pre-sale, no insiders, max 1B supply
                 </li>
                 <li className="flex items-center">
-                  <span className="text-green-400 mr-2">✔</span>
+                  <span className="text-verde mr-2">✔</span>
                   Ownership renounced, immutable
                 </li>
                 <li className="flex items-center">
-                  <span className="text-green-400 mr-2">✔</span>
+                  <span className="text-verde mr-2">✔</span>
                   Fully audited smart contracts
                 </li>
                 <li className="flex items-center">
-                  <span className="text-green-400 mr-2">✔</span>
+                  <span className="text-verde mr-2">✔</span>
                   Buy and sell at any time
                 </li>
               </ul>
             </div>
 
             <div className="bg-[#252525] rounded-lg p-6 shadow-inner">
-              <h3 className="text-2xl font-bold text-yellow-400 mb-4 flex items-center">
+              <h3 className="text-2xl font-bold text-verdeFosfo mb-4 flex items-center">
                 <FaChartLine className="mr-2" /> Wen Moon?
               </h3>
               <p className="mb-3">
-                <span className="font-semibold text-green-400">💪 Migration Trigger:</span> Once market cap reaches <strong className="text-orange-400">432 SOL (~$68.7K)</strong>, all remaining tokens and liquidity migrate to Meteora or Raydium
+                <span className="font-semibold text-verde">💪 Migration Trigger:</span> Once market cap reaches <strong className="text-naranja">432 SOL (~$68.7K)</strong>, all remaining tokens and liquidity migrate to Meteora or Raydium
               </p>
               <p className="mb-3">
-                <span className="font-semibold text-green-400">🪙 Strategy:</span> Launch, Lock & Earn
+                <span className="font-semibold text-verde">🪙 Strategy:</span> Launch, Lock & Earn
               </p>
               <p className="mb-3">
-                <span className="font-semibold text-green-400">🔒 Security:</span> All liquidity is locked forever
+                <span className="font-semibold text-verde">🔒 Security:</span> All liquidity is locked forever
               </p>
               <p>
-                <span className="font-semibold text-green-400">🚀 Boost:</span> Free Enhanced Token Info gives all Root Fun tokens the best chance to trend on DEX Screener!
+                <span className="font-semibold text-verde">🚀 Boost:</span> Free Enhanced Token Info gives all Root Fun tokens the best chance to trend on DEX Screener!
               </p>
             </div>
           </div>
 
           <div className="space-y-6">
             <div className="bg-[#252525] rounded-lg p-6 shadow-inner">
-              <h3 className="text-2xl font-bold text-yellow-400 mb-4 flex items-center">
+              <h3 className="text-2xl font-bold text-verdeFosfo mb-4 flex items-center">
                 <FaLock className="mr-2" /> Security & Transparency
               </h3>
               <p className="mb-3">
@@ -87,7 +87,7 @@ export default function HowItWorksModal({
             </div>
 
             <div className="bg-[#252525] rounded-lg p-6 shadow-inner">
-              <h3 className="text-2xl font-bold text-yellow-400 mb-4 flex items-center">
+              <h3 className="text-2xl font-bold text-verdeFosfo mb-4 flex items-center">
                 <FaExclamationTriangle className="mr-2" /> Disclaimer
               </h3>
               <p className="text-gray-300 text-sm">
@@ -96,10 +96,10 @@ export default function HowItWorksModal({
             </div>
 
             <div className="flex flex-col space-y-4 mt-6">
-              <button className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-full font-bold text-lg hover:from-green-600 hover:to-blue-600 transition-all duration-300 shadow-lg">
+              <button className="bg-gradient-to-r from-verde to-aqua text-black px-6 py-3 rounded-full font-bold text-lg hover:from-verde hover:to-aqua transition-all duration-300 shadow-lg">
                 Explore Root Fun
               </button>
-              <button className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-full font-bold text-lg hover:from-yellow-600 hover:to-orange-600 transition-all duration-300 shadow-lg">
+              <button className="bg-gradient-to-r from-verdeFosfo to-naranja text-black px-6 py-3 rounded-full font-bold text-lg hover:from-verdeFosfo hover:to-naranja transition-all duration-300 shadow-lg">
                 Launch Your Token
               </button>
             </div>

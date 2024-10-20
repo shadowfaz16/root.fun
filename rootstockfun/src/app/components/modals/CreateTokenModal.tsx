@@ -3,6 +3,7 @@ import { useWriteContract } from "wagmi";
 import abi from "@/factoryabi.json";
 import { generateLink } from "@/app/api/walruslinks/route";
 import { toast } from "sonner";
+import { getFillerItems } from "@/app/api/walruslinks/route";
 
 interface CreateTokenModalProps {
   isOpen: boolean;
@@ -82,6 +83,11 @@ export default function CreateTokenModal({
     }
   };
 
+  const getFillerItemsCall = async () => {
+    const fillerItems = await getFillerItems();
+    console.log("fillerItems: ", fillerItems);
+  };
+
   console.log("data: ", data);
   console.log("isError: ", isError);
   console.log("error: ", error);
@@ -106,6 +112,7 @@ export default function CreateTokenModal({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-[#252525] rounded-lg p-8 w-full max-w-xl">
+        <button onClick={getFillerItemsCall}>Get Filler Items</button>
         <h3 className="text-2xl font-bold text-white mb-6">
           Create Your Meme Token
         </h3>

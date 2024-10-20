@@ -20,10 +20,10 @@ export default function Sidebar() {
     <aside className="w-56 bg-[#121212] flex flex-col items-start py-8 px-4 pt-8">
       {/* <Image src={logo} alt="Pump" width={100} height={100} /> */}
       <div className="flex flex-col items-start gap-1">
-        <p className="text-black text-3xl font-semibold bg-pink-400 p-1">
+        <p className="text-black text-3xl font-semibold bg-rosa p-1">
           Pump
         </p>
-        <p className="text-black text-3xl font-semibold bg-orange-400 p-1">
+        <p className="text-black text-3xl font-semibold bg-naranja p-1">
           Together
         </p>
       </div>

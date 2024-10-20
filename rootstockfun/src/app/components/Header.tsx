@@ -42,14 +42,14 @@ export default function Header() {
         >
           Recent Buys
         </button>
-        <button
+        {/* <button
           className={`text-lg ${
             activeTab === "hot" ? "text-orange-500" : "text-gray-400"
           } hover:text-orange-400`}
           onClick={() => setActiveTab("hot")}
         >
           Hot Tokens
-        </button>
+        </button> */}
         <button
           className={`text-lg ${
             activeTab === "how-it-works"
@@ -80,7 +80,7 @@ export default function Header() {
         >
           Telegram
         </Link>
-        <button onClick={() => setIsCreateTokenModalOpen(true)} className=" text-lg text-orange-500 hover:text-orange-400">
+        <button onClick={() => setIsCreateTokenModalOpen(true)} className=" text-lg text-verdeFosfo hover:text-verdeFosfo">
           Create Token
         </button>
       </div>

@@ -10,6 +10,7 @@ import coin from "@/assets/ROOT-FOR-YOUR-COIN-GIF.gif";
 import { FaGlobe, FaTelegramPlane, FaTwitter } from "react-icons/fa";
 import coinGif from "@/assets/rootstock-coin.gif";
 import Link from "next/link";
+import HowItWorksModal from "./components/modals/HowItWorks";
 
 interface Token {
   creatorAddress: string;
@@ -25,6 +26,7 @@ export default function Homepage() {
   const { address } = useAccount();
   const [activeTab, setActiveTab] = useState("recent");
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
+  const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);
   const result: UseReadContractReturnType<Token[]> = useReadContract({
     abi,
     address: "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4",
@@ -108,10 +110,22 @@ export default function Homepage() {
           {activeTab === "recent" && (
             <section className="mb-8">
               <h2 className="text-3xl font-bold">New Launches</h2>
-              <p className="text-white mb-6">
+              <p className="text-white mb-4">
                 Discover the next trending token, {" "}
                 <span className="font-semibold">before everyone else!</span>
               </p>
+              <div className="flex items-center gap-2 mb-4">
+                <button className="bg-rosa text-black font-bold text-sm hover:bg-rosa transition-all duration-300 px-4 py-2 rounded-md shadow-md hover:shadow-lg"
+                  onClick={() => setIsHowItWorksModalOpen(true)}
+                >
+                  How does it work?
+                </button>
+                <button className="bg-verdeFosfo text-black font-bold text-sm hover:bg-verdeFosfo transition-all duration-300 px-4 py-2 rounded-md shadow-md hover:shadow-lg ml-2"
+                  onClick={() => setIsCreateTokenModalOpen(true)}
+                >
+                  Launch your token
+                </button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {result.isLoading ? (
                   // Display loading skeletons while data is loading
@@ -128,15 +142,19 @@ export default function Homepage() {
                       className="bg-[#252525] rounded-xl shadow-lg hover:shadow-2xl transition duration-300 p-4 relative"
                     >
                       <div className="flex gap-4 items-center pb-4 border-b border-gray-700 mb-4">
-                        <img
-                          src={
-                            token.tokenImageUrl && token.tokenImageUrl !== "" && !token.tokenImageUrl.includes("ipfs://") && !token.tokenImageUrl.includes("google")
-                              ? token.tokenImageUrl
-                              : coinGif.src
-                          }
-                          alt="Coin"
-                          className="w-24 h-24 rounded-lg"
-                        />
+                        {token.tokenImageUrl && token.tokenImageUrl !== "" && !token.tokenImageUrl.includes("ipfs://") && !token.tokenImageUrl.includes("google") ? (
+                          <img
+                            src={token.tokenImageUrl}
+                            alt="Coin"
+                            className="w-24 h-24 rounded-lg"
+                          />
+                        ) : (
+                          <img
+                            src={coinGif.src}
+                            alt="Coin"
+                            className="w-24 h-24 rounded-lg"
+                          />
+                        )}
                         <div className="">
                           <div className="text-xl font-semibold mb-1">
                             <span className="text-gray-400 mr-2 uppercase text-lg">
@@ -218,6 +236,13 @@ export default function Homepage() {
         onClose={() => setIsCreateTokenModalOpen(false)}
         onSubmit={() => {}}
       />
+      {
+        isHowItWorksModalOpen && (
+          <HowItWorksModal
+            toggleModal={() => setIsHowItWorksModalOpen(!isHowItWorksModalOpen)}
+          />
+        )
+      }
     </div>
   );
 }

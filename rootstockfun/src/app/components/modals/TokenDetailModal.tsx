@@ -23,7 +23,8 @@ const TokenDetail = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { address } = useAccount();
-  const factoryAddress = "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4";
+//   const factoryAddress = "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4";
+const factoryAddress = "0xc899967C168AcCF42d43660079d24E2718aCbbd1";
   const [tokenAddress, setTokenAddress] = useState<string | null>(
     pathname.split("/")[2]
   );
@@ -300,7 +301,7 @@ const TokenDetail = () => {
             </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
-                className="bg-green-600 h-2.5 rounded-full"
+                className="bg-aqua h-2.5 rounded-full"
                 style={{ width: `${totalSupplyPercentage}%` }}
               ></div>
             </div>
@@ -317,7 +318,7 @@ const TokenDetail = () => {
             />
             <button
               onClick={getCost}
-              className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+              className="w-full bg-verdeFosfo text-black font-semibold px-4 py-2 rounded hover:bg-blue-600 transition"
             >
               Purchase
             </button>

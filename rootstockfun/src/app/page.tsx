@@ -29,7 +29,7 @@ export default function Homepage() {
   const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);
   const result: UseReadContractReturnType<Token[]> = useReadContract({
     abi,
-    address: "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4",
+    address: "0xc899967C168AcCF42d43660079d24E2718aCbbd1",
     functionName: "getAllMemeTokens",
     account: address,
     chainId: 31,

@@ -38,8 +38,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Root Fun",
-  description: "Root Fun - Pump Up Your Rootstock Experience",
+  title: "Root For Fun",
+  description: "Root For Fun - Pump Up Your Memecoin Experience on Rootstock",
 };
 
 export default function RootLayout({

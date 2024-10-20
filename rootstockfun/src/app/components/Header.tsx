@@ -58,7 +58,7 @@ export default function Header() {
         >
           Telegram
         </Link>
-        <button onClick={() => setIsCreateTokenModalOpen(true)}>
+        <button onClick={() => setIsCreateTokenModalOpen(true)} className=" text-lg text-orange-500 hover:text-orange-400">
           Create Token
         </button>
       </div>

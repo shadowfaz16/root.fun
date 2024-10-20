@@ -60,7 +60,7 @@ export default function CreateTokenModal({
         tokenData.symbol,
         tokenData.imageUrl,
         tokenData.description,
-        10000,
+        0,
       ],
       value: BigInt(100000000000000),
     });

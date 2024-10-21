@@ -56,7 +56,7 @@ export default function HowItWorksModal({
                 <FaChartLine className="mr-2" /> Wen Moon?
               </h3>
               <p className="mb-3">
-                <span className="font-semibold text-verde">💪 Migration Trigger:</span> Once market cap reaches <strong className="text-naranja">432 SOL (~$68.7K)</strong>, all remaining tokens and liquidity migrate to Meteora or Raydium
+                <span className="font-semibold text-verde">💪 Migration Trigger:</span> Once market cap reaches <strong className="text-naranja">1 RBTC (~$68.7K)</strong>, all remaining tokens and liquidity migrate to Meteora or Raydium
               </p>
               <p className="mb-3">
                 <span className="font-semibold text-verde">🪙 Strategy:</span> Launch, Lock & Earn

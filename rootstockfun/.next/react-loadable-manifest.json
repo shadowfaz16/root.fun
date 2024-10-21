@@ -29,6 +29,18 @@
       "static/chunks/_app-pages-browser_node_modules_walletconnect_modal-ui_dist_index_js.js"
     ]
   },
+  "../node_modules/pinata-web3/dist/index.mjs -> axios": {
+    "id": "../node_modules/pinata-web3/dist/index.mjs -> axios",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_axios_index_js.js"
+    ]
+  },
+  "../node_modules/pinata-web3/dist/index.mjs -> is-ipfs": {
+    "id": "../node_modules/pinata-web3/dist/index.mjs -> is-ipfs",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_is-ipfs_dist_src_index_js.js"
+    ]
+  },
   "../node_modules/viem/_esm/actions/public/call.js -> ../../utils/ccip.js": {
     "id": "../node_modules/viem/_esm/actions/public/call.js -> ../../utils/ccip.js",
     "files": [

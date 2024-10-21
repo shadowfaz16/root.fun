@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { formatEther, parseEther } from "viem";
 import { getBalance } from "@wagmi/core";
 import { config } from "@/config";
+import {GateFiDisplayModeEnum, GateFiSDK} from "@gatefi/js-sdk";
 
 interface MemeToken {
   name: string;
@@ -38,7 +39,7 @@ const TokenDetail = () => {
   const { address } = useAccount();
   //   const factoryAddress = "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4";
   const factoryAddress = "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06";
-  const tokenAddress = pathname.split("/")[2];
+  const tokenAddress = pathname?.split("/")[2];
 
   const { data: getMemeToken } = useReadContract({
     address: factoryAddress,
@@ -56,7 +57,7 @@ const TokenDetail = () => {
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [cost, setCost] = useState("0");
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [overlayInstance, setOverlayInstance] = useState<GateFiSDK | null>(null);
 
   const { data: totalSupplyy } = useReadContract({
     address: tokenAddress as `0x${string}`,
@@ -65,6 +66,20 @@ const TokenDetail = () => {
   });
 
   console.log("totalSupplyy", (Number(totalSupplyy) / 10 ** 18));
+
+  useEffect(() => {
+    const instance = new GateFiSDK({
+      merchantId: "be07174d-8428-4227-be47-52391c7eafc1",
+      displayMode: "overlay" as GateFiDisplayModeEnum,
+      nodeSelector: "#overlay-button",
+      walletAddress: address,
+    });
+    setOverlayInstance(instance);
+    instance.hide(); // Uncomment if you need to initially hide the overlay
+  }, [address]);
+  const openOverlay = () => {
+    overlayInstance?.show();
+  };
 
 
   useEffect(() => {
@@ -297,6 +312,13 @@ const TokenDetail = () => {
             >
               Purchase
             </button>
+            <button
+            id="overlay-button" 
+              onClick={openOverlay}
+              className="w-full bg-rosa text-black font-semibold px-4 py-2 rounded hover:bg-blue-600 transition"
+            >
+              Purchase with Card
+            </button>
           </div>
         </div>
       </div>
@@ -311,13 +333,13 @@ const TokenDetail = () => {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={() => handlePurchase()}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+                className="bg-verdeFosfo text-black px-4 py-2 rounded hover:bg-verdeFosfo transition"
               >
                 Confirm
               </button>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+                className="bg-rosa text-black px-4 py-2 rounded hover:bg-red-600 transition"
               >
                 Cancel
               </button>

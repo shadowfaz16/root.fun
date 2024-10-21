@@ -6,6 +6,7 @@ import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import { Providers } from "@/providers";
+import Providers2 from "@/providers2";
 import { Toaster } from "sonner";
 
 const evmNetworks = [
@@ -38,8 +39,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Root For Fun",
-  description: "Root For Fun - Pump Up Your Memecoin Experience on Rootstock",
+  title: "Root 4 Fun",
+  description: "Root 4 Fun - Pump Up Your Memecoin Experience on Rootstock",
 };
 
 export default function RootLayout({

@@ -6,6 +6,8 @@ import { useAccount } from "wagmi";
 import CreateTokenModal from "./modals/CreateTokenModal";
 import HowItWorksModal from "./modals/HowItWorks";
 import { GateFiDisplayModeEnum, GateFiSDK } from "@gatefi/js-sdk";
+import {usePrivy} from '@privy-io/react-auth';
+
 
 export default function Header() {
   const { address } = useAccount();
@@ -29,6 +31,8 @@ export default function Header() {
   const openOverlay = () => {
     overlayInstance?.show();
   };
+
+  
 
   return (
     <header className="flex justify-between items-center p-4 md:p-6 bg-[#121212] overflow-hidden">

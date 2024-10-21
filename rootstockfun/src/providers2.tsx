@@ -2,7 +2,7 @@
 
 import {PrivyProvider} from '@privy-io/react-auth';
 
-export default function Providers({children}: {children: React.ReactNode}) {
+export default function Providers2({children}: {children: React.ReactNode}) {
   return (
     <PrivyProvider
       appId="cm2hp6gly018vjk9inx1mtsod"

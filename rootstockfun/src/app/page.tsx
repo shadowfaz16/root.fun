@@ -112,9 +112,12 @@ export default function Homepage() {
                               <span className="text-gray-400 mr-1 md:mr-2 uppercase md:text-lg">
                                 ${token.symbol}
                               </span>
-                              {(token.symbol + token.name).length > 10
-                                ? `${token.name.slice(0, 8)}...`
-                                : token.name}
+                              <span className="hidden md:inline">{token.name}</span>
+                              <span className="md:hidden">
+                                {(token.symbol + token.name).length > 10
+                                  ? `${token.name.slice(0, 8)}...`
+                                  : token.name}
+                              </span>
                             </div>
                             <p className="text-gray-400 text-sm">
                               {token.description}

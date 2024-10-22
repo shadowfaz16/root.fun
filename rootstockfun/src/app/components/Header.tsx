@@ -5,7 +5,6 @@ import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import { useAccount } from "wagmi";
 import CreateTokenModal from "./modals/CreateTokenModal";
 import HowItWorksModal from "./modals/HowItWorks";
-import { GateFiDisplayModeEnum, GateFiSDK } from "@gatefi/js-sdk";
 import {usePrivy} from '@privy-io/react-auth';
 
 
@@ -13,29 +12,21 @@ export default function Header() {
   const { address } = useAccount();
   const [activeTab, setActiveTab] = useState("recent");
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
-  const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);
-  const [overlayInstance, setOverlayInstance] = useState<GateFiSDK | null>(
-    null
-  );
-
-  useEffect(() => {
-    const instance = new GateFiSDK({
-      merchantId: "be07174d-8428-4227-be47-52391c7eafc1",
-      displayMode: "overlay" as GateFiDisplayModeEnum,
-      nodeSelector: "#overlay-button",
-      walletAddress: address,
-    });
-    setOverlayInstance(instance);
-    instance.hide(); // Uncomment if you need to initially hide the overlay
-  }, [address]);
-  const openOverlay = () => {
-    overlayInstance?.show();
-  };
-
-  
+  const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);  
 
   return (
     <header className="flex justify-between items-center p-4 md:p-6 bg-[#121212] overflow-hidden">
+       <div className="flex flex-col items-start gap-1 relative md:hidden">
+        <p className="text-black font-semibold bg-rosa px-1 py-0.5">
+          Pump
+        </p>
+        <p className="text-black font-semibold bg-naranja px-1 py-0.5">
+          Together
+        </p>
+        <p className="absolute top-0 -right-3 text-[8px] text-white bg-black/70 border border-white rounded-full px-3 py-1 transform rotate-[20deg]">
+          on Bitcoin
+        </p>
+      </div>
       <div className="gap-6 items-center hidden md:flex">
         <button
           className={`text-lg ${
@@ -81,7 +72,6 @@ export default function Header() {
         >
           Telegram
         </Link>
-        <button id="overlay-button" className="text-lg text-aqua" onClick={openOverlay}>Get funds</button>
         <button
           onClick={() => setIsCreateTokenModalOpen(true)}
           className=" text-lg text-verdeFosfo hover:text-verdeFosfo"

@@ -153,7 +153,7 @@ export default function CreateTokenModal({
       onClick={onClose}
     >
       <div
-        className="bg-[#252525] rounded-lg p-4 md:p-8 w-full max-w-xl"
+        className="bg-[#252525] rounded-lg p-4 md:p-8 w-full max-w-xl overflow-y-scroll h-[90vh] md:h-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-2xl font-bold text-white mb-6">
@@ -216,6 +216,23 @@ export default function CreateTokenModal({
                   placeholder="Enter image URL"
                 />
               </div> */}
+                 <div>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  id="description"
+                  value={tokenData.description}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md bg-[#3a3a3a] border-gray-600 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 px-4 py-3"
+                  required
+                  placeholder="Enter description"
+                ></textarea>
+              </div>
               <div>
                 <label
                   htmlFor="file-upload"
@@ -302,23 +319,6 @@ export default function CreateTokenModal({
                 {url && <p> Uploaded image: {url}</p>}
                 {url && <img src={url} alt="uploaded image" />}
               </div>
-              <div>
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Description
-                </label>
-                <textarea
-                  name="description"
-                  id="description"
-                  value={tokenData.description}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md bg-[#3a3a3a] border-gray-600 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 px-4 py-3"
-                  required
-                  placeholder="Enter description"
-                ></textarea>
-              </div>
             </>
           )}
           {step === 2 && (
@@ -388,7 +388,7 @@ export default function CreateTokenModal({
               </div>
             </>
           )}
-          <div className="mt-4 md:mt-8 flex flex-col md:flex-row justify-end md:space-x-4">
+          <div className="mt-4 md:mt-8 flex flex-col md:flex-row justify-end space-y-2 md:space-y-0 md:space-x-4">
             <button
               type="button"
               className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 px-6 py-3 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"

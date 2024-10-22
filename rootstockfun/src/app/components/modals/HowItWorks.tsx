@@ -8,7 +8,7 @@ export default function HowItWorksModal({
 }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 p-4">
-      <div className="bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] text-white rounded-xl w-full max-w-4xl p-8 shadow-2xl overflow-hidden relative">
+      <div className="bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] text-white rounded-xl w-full max-w-4xl p-6 md:p-8 shadow-2xl overflow-hidden relative h-[90vh] md:h-auto overflow-y-scroll">
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-verde via-verdeFosfo to-naranja"></div>
         
         <div className="flex justify-between items-center mb-6">

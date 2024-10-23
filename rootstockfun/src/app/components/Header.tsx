@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
+import { useState } from "react";
+import { ConnectButton } from "thirdweb/react";
 import { useAccount } from "wagmi";
 import CreateTokenModal from "./modals/CreateTokenModal";
 import HowItWorksModal from "./modals/HowItWorks";
-import {usePrivy} from '@privy-io/react-auth';
+import client from "../client";
 
 
 export default function Header() {
@@ -79,7 +79,9 @@ export default function Header() {
           Create Token
         </button>
       </div>
-      <DynamicWidget />
+      <ConnectButton
+        client={client}
+      />
       {isCreateTokenModalOpen && (
         <CreateTokenModal
           isOpen={isCreateTokenModalOpen}

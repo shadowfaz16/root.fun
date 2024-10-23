@@ -1,22 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import abi from "@/factoryabi.json";
 import tokenAbi from "@/tokenabi.json";
 import coinImage from "@/assets/rootstock-coin-2.gif";
 import { usePathname } from "next/navigation";
-import {
-  useWriteContract,
-  useAccount,
-  useReadContract,
-} from "wagmi";
+import { useWriteContract, useAccount, useReadContract } from "wagmi";
 import { toast } from "sonner";
 import { formatEther, parseEther } from "viem";
 import { getBalance } from "@wagmi/core";
 import { config } from "@/config";
-import {GateFiDisplayModeEnum, GateFiSDK} from "@gatefi/js-sdk";
+import Link from "next/link";
 
 interface MemeToken {
   name: string;
@@ -34,10 +29,8 @@ interface Holder {
 }
 
 const TokenDetail = () => {
-  const router = useRouter();
   const pathname = usePathname();
   const { address } = useAccount();
-  //   const factoryAddress = "0xca612d23a9c3657c5f86bdee7b6caae81d8628a4";
   const factoryAddress = "0x53Fa9497537d29D6026C6e6CCD8c1684D9c3FC06";
   const tokenAddress = pathname?.split("/")[2];
 
@@ -48,7 +41,6 @@ const TokenDetail = () => {
     args: [tokenAddress],
   });
 
-
   console.log("getMemeToken", getMemeToken);
 
   const [owners, setOwners] = useState<Holder[]>([]);
@@ -57,7 +49,6 @@ const TokenDetail = () => {
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [cost, setCost] = useState("0");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [overlayInstance, setOverlayInstance] = useState<GateFiSDK | null>(null);
 
   const { data: totalSupplyy } = useReadContract({
     address: tokenAddress as `0x${string}`,
@@ -65,36 +56,23 @@ const TokenDetail = () => {
     functionName: "totalSupply",
   });
 
-  console.log("totalSupplyy", (Number(totalSupplyy) / 10 ** 18));
-
-  useEffect(() => {
-    const instance = new GateFiSDK({
-      merchantId: "be07174d-8428-4227-be47-52391c7eafc1",
-      displayMode: "overlay" as GateFiDisplayModeEnum,
-      nodeSelector: "#overlay-button",
-      walletAddress: address,
-    });
-    setOverlayInstance(instance);
-    instance.hide(); // Uncomment if you need to initially hide the overlay
-  }, [address]);
-  const openOverlay = () => {
-    overlayInstance?.show();
-  };
-
+  console.log("totalSupplyy", Number(totalSupplyy) / 10 ** 18);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!tokenAddress) return;
-  
+
       try {
-        const response = await fetch(`/api/walruslinks?contractAddress=${tokenAddress}`);
+        const response = await fetch(
+          `/api/walruslinks?contractAddress=${tokenAddress}`
+        );
         const data = await response.json();
         if (data.success) {
           setOwners(data.holders || []);
         } else {
           console.error("Error fetching token holders:", data.error);
         }
-  
+
         await fetchTotalSupply();
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -102,19 +80,17 @@ const TokenDetail = () => {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, [tokenAddress]);
 
   console.log("owners", owners);
 
-
   const fetchTotalSupply = async () => {
     if (!tokenAddress) return;
     if (!totalSupplyy) return;
     if (totalSupplyy) {
-      const totalSupplyFormatted =
-        (Number(totalSupplyy) / 10 ** 18) - 200000;
+      const totalSupplyFormatted = Number(totalSupplyy) / 10 ** 18 - 200000;
       setRemainingTokens((maxSupply - totalSupplyFormatted).toString());
     }
   };
@@ -131,15 +107,13 @@ const TokenDetail = () => {
   const fundingGoal = 0.1;
   const maxSupply = 800000;
 
-  const fundingRaisedPercentage = (
+  const fundingRaisedPercentage =
     (parseFloat(
       getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"
     ) /
       10 ** 18 /
       fundingGoal) *
-    100
-  );
-  console.log("fundingRaisedPercentage", fundingRaisedPercentage);
+    100;
   const totalSupplyPercentage =
     ((Number(totalSupplyy) / 10 ** 18 - 200000) / (maxSupply - 200000)) * 100;
   const getCost = async () => {
@@ -219,42 +193,62 @@ const TokenDetail = () => {
   console.log("costInWei", costInWei);
   console.log("purchaseAmount", purchaseAmount);
   console.log("remainingTokens", remainingTokens);
+  console.log("fundingRaisedPercentage", fundingRaisedPercentage);
 
   return (
     <div className="container mx-auto p-6 bg-[#121212]">
-      <button
-        onClick={() => router.push("/")}
+      <Link
+        href="/"
         className="mb-8 text-white hover:text-orange-500 transition-all duration-300"
       >
         ← Back Home
-      </button>
+      </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <h2 className="text-2xl font-bold">
             Token Detail for{" "}
-            {getMemeToken ? (getMemeToken as MemeToken).name.toString() : "Unknown"}
+            {getMemeToken
+              ? (getMemeToken as MemeToken).name.toString()
+              : "Unknown"}
           </h2>
           <Image
-            src={getMemeToken ? (getMemeToken as MemeToken).tokenImageUrl : coinImage}
-            alt={getMemeToken ? (getMemeToken as MemeToken).tokenImageUrl : "Unknown"}
+            src={
+              getMemeToken
+                ? (getMemeToken as MemeToken).tokenImageUrl
+                : coinImage
+            }
+            alt={
+              getMemeToken
+                ? (getMemeToken as MemeToken).tokenImageUrl
+                : "Unknown"
+            }
             width={250}
             height={250}
             className="rounded-lg"
           />
           <p>
             <strong>Creator Address:</strong>{" "}
-            {getMemeToken ? (getMemeToken as MemeToken).creatorAddress.toString() : "Unknown"}
+            {getMemeToken
+              ? (getMemeToken as MemeToken).creatorAddress.toString()
+              : "Unknown"}
           </p>
           <p>
             <strong>Token Address:</strong> {tokenAddress}
           </p>
           <p>
-            <strong>Funding Raised:</strong> {parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") / 10 ** 18} ETH
+            <strong>Funding Raised:</strong>{" "}
+            {parseFloat(
+              getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"
+            ) /
+              10 ** 18}{" "}
+            ETH
           </p>
           <p>
             <strong>Token Symbol:</strong>{" "}
-            {getMemeToken ? (getMemeToken as MemeToken).symbol.toString() : "Unknown"}
+            {getMemeToken
+              ? (getMemeToken as MemeToken).symbol.toString()
+              : "Unknown"}
           </p>
           <p>
             <strong>Description:</strong>{" "}
@@ -266,8 +260,11 @@ const TokenDetail = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">Bonding Curve Progress</h3>
             <p>
-              {parseFloat(getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0") / 10 ** 18} /{" "}
-              {fundingGoal} ETH raised
+              {parseFloat(
+                getMemeToken ? (getMemeToken as MemeToken).fundingRaised : "0"
+              ) /
+                10 ** 18}{" "}
+              / {fundingGoal} ETH raised
             </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
@@ -287,7 +284,8 @@ const TokenDetail = () => {
               Remaining Tokens Available for Sale
             </h3>
             <p>
-              {maxSupply - (Number(totalSupplyy) / 10 ** 18 - 200000)} / {maxSupply}
+              {maxSupply - (Number(totalSupplyy) / 10 ** 18 - 200000)} /{" "}
+              {maxSupply}
             </p>
             <div className="bg-gray-200 rounded-full h-2.5">
               <div
@@ -311,13 +309,6 @@ const TokenDetail = () => {
               className="w-full bg-verdeFosfo text-black font-semibold px-4 py-2 rounded hover:bg-blue-600 transition"
             >
               Purchase
-            </button>
-            <button
-            id="overlay-button" 
-              onClick={openOverlay}
-              className="w-full bg-rosa text-black font-semibold px-4 py-2 rounded hover:bg-blue-600 transition"
-            >
-              Purchase with Card
             </button>
           </div>
         </div>
@@ -360,7 +351,9 @@ const TokenDetail = () => {
                   <tr>
                     <th className="px-4 py-2 text-left">Owner Address</th>
                     <th className="px-4 py-2 text-left">Balance</th>
-                    <th className="px-4 py-2 text-left">% Holder Distribution</th>
+                    <th className="px-4 py-2 text-left">
+                      % Holder Distribution
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

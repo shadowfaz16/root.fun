@@ -3,7 +3,11 @@ import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import abi from "@/factoryabi.json";
 import { toast } from "sonner";
 import TokenInfoIframe from "../TokenInfoIframe";
-import { generateTokenData } from "@/app/serverActions/tokenActions"; // Import the server-side function
+import {
+  generateTokenData,
+  generateXAIWebsite,
+  getChatCompletion,
+} from "@/app/serverActions/tokenActions";
 import { pinata } from "@/utils/pinataConfig";
 
 interface CreateTokenModalProps {
@@ -22,6 +26,7 @@ interface TokenData {
   description?: string;
   imageUrl?: string;
 }
+
 
 export default function CreateTokenModal({
   isOpen,
@@ -52,6 +57,8 @@ export default function CreateTokenModal({
   const [selectedFile, setSelectedFile] = useState<File>();
   const [url, setUrl] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
+  const [generatedDescription, setGeneratedDescription] = useState<string>("");
+  const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedFile(event.target?.files?.[0]);
@@ -145,6 +152,36 @@ export default function CreateTokenModal({
     hash,
   });
 
+  const handleGenerateDescription = async () => {
+    setIsGeneratingDescription(true);
+    try {
+      const generatedData = await getChatCompletion(tokenData.description!);
+      console.log("Generated token data:", generatedData);
+      setGeneratedDescription(generatedData.choices[0].message.content);
+      setTokenData((prev) => ({ ...prev, description: generatedDescription }));
+    } catch (error) {
+      console.error("Error generating description:", error);
+      toast.error("Error generating description!");
+    } finally {
+      setIsGeneratingDescription(false);
+    }
+  };
+
+  const handleWebisteGeneration = async () => {
+    setIsGeneratingHTML(true);
+    toast.info("Generating with XAI!");
+    try {
+      const generatedData = await generateXAIWebsite(tokenData);
+      console.log("Generated website data:", generatedData);
+      setHtmlContent(generatedData.choices[0].message.content);
+    } catch (error) {
+      console.error("Error generating website:", error);
+      toast.error("Error generating website!");
+    } finally {
+      setIsGeneratingHTML(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -216,7 +253,7 @@ export default function CreateTokenModal({
                   placeholder="Enter image URL"
                 />
               </div> */}
-                 <div>
+              <div>
                 <label
                   htmlFor="description"
                   className="block text-sm font-medium text-gray-300 mb-2"
@@ -232,6 +269,17 @@ export default function CreateTokenModal({
                   required
                   placeholder="Enter description"
                 ></textarea>
+                <p
+                  className="text-xs text-naranja cursor-pointer hover:text-naranja/80 mt-1 transition-colors duration-300"
+                  onClick={handleGenerateDescription}
+                >
+                  Generate description with XAI
+                </p>
+                {generatedDescription && (
+                  <p className="text-xs text-emerald-500">
+                    {generatedDescription}
+                  </p>
+                )}
               </div>
               <div>
                 <label
@@ -242,7 +290,9 @@ export default function CreateTokenModal({
                 </label>
                 <div
                   className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md bg-[#3a3a3a] hover:bg-[#4a4a4a] transition-colors duration-300 cursor-pointer"
-                  onClick={() => document.getElementById('file-upload')?.click()}
+                  onClick={() =>
+                    document.getElementById("file-upload")?.click()
+                  }
                   onDragOver={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -443,7 +493,7 @@ export default function CreateTokenModal({
             <button
               type="button"
               className="inline-flex justify-center rounded-md border border-transparent bg-rosa px-6 py-3  text-black text-sm font-semibold hover:bg-rosa focus:outline-none focus:ring-2 focus:ring-rosa"
-              onClick={handleGenerateLink}
+              onClick={handleWebisteGeneration}
             >
               {isGeneratingHTML ? (
                 <>
@@ -475,7 +525,7 @@ export default function CreateTokenModal({
             </button>
           </div>
         </form>
-        {htmlContent && (
+        {/* {htmlContent && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="relative w-full h-full max-w-4xl max-h-[90vh] bg-white rounded-lg shadow-xl overflow-hidden">
               <button
@@ -500,6 +550,37 @@ export default function CreateTokenModal({
               <div className="w-full h-full">
                 <TokenInfoIframe htmlContent={htmlContent} />
               </div>
+            </div>
+          </div>
+        )} */}
+
+        {htmlContent && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="relative w-4/5 h-4/5 bg-white rounded-lg shadow-xl overflow-hidden">
+              <button
+                onClick={() => setHtmlContent(null)}
+                className="absolute top-4 right-4 z-10 bg-gray-800 text-white rounded-full p-2 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+              <iframe
+                srcDoc={htmlContent}
+                title="Generated Website"
+                className="w-full h-full"
+              ></iframe>
             </div>
           </div>
         )}

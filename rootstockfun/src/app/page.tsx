@@ -75,7 +75,6 @@ export default function Homepage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {result.isLoading ? (
-                  // Display loading skeletons while data is loading
                   Array(4)
                     .fill(0)
                     .map((_, index) => <LoadingSkeleton key={index} />)

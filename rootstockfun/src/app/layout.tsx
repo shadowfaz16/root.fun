@@ -8,24 +8,7 @@ import Sidebar from "./components/Sidebar";
 import { Providers } from "@/providers";
 import Providers2 from "@/providers2";
 import { Toaster } from "sonner";
-
-const evmNetworks = [
-  {
-    blockExplorerUrls: ["https://rootstock-testnet.blockscout.com"],
-    chainId: 31,
-    chainName: "Rootstock Testnet",
-    iconUrls: ["https://app.dynamic.xyz/assets/networks/eth.svg"],
-    name: "Rootstock Testnet",
-    nativeCurrency: {
-      decimals: 18,
-      name: "Rootstock",
-      symbol: "RBTC",
-    },
-    networkId: 31,
-    rpcUrls: ["https://explorer.testnet.rsk.co"],
-    vanityName: "Rootstock Testnet",
-  },
-];
+import { ThirdwebProvider } from "thirdweb/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -54,15 +37,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen bg-[#121212] max-w-screen overflow-x-hidden`}
         >
-          <DynamicContextProvider
-            settings={{
-              environmentId: "281a8b75-b8dd-4d3e-836c-d2603e028519",
-              walletConnectors: [EthereumWalletConnectors],
-              overrides: {
-                evmNetworks,
-              },
-            }}
-          >
+          <ThirdwebProvider>
             <div className="flex flex-1 h-full">
               <div className="hidden md:block h-full">
                 <Sidebar />
@@ -72,7 +47,7 @@ export default function RootLayout({
                 <main className="flex-1">{children}</main>
               </div>
             </div>
-          </DynamicContextProvider>
+          </ThirdwebProvider>
         </body>
         <Toaster richColors />
       </Providers>
